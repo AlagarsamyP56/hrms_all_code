@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd">
+	<flow name="dwinsoft-bulk-dataFlow" doc:id="cc8239f5-0e57-4dee-90e6-e4b4150f6aa6" >
+		<scheduler doc:name="Scheduler" doc:id="655f7f78-06bd-40c6-9c03-69994f27bb2f" >
+			<scheduling-strategy >
+				<fixed-frequency frequency="2" timeUnit="HOURS"/>
+			</scheduling-strategy>
+		</scheduler>
+		<!-- [STUDIO:"Listener"]		<http:listener doc:name="Listener" doc:id="b21705f1-2eb5-4662-90c8-d529988f165e" config-ref="HTTP_Listener_config" path="/apii"/> [STUDIO] -->
+				<sftp:read doc:name="Read" doc:id="58b7cd52-b4c7-4a47-befe-b3fec105780a" config-ref="SFTP_Config" path="/training/alagar_training/upload/employees.csv"/>
+		<ee:transform doc:name="Transform Message" doc:id="30e00911-a4bf-4b16-a60b-81aeb8f30d2e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[
+%dw 2.0
+output application/csv 
+
+---
+payload map {
+    Employee_ID__c : $.Employee_ID,
+	Name_c__c:$.Name,
+	City__c : $.City,
+	Pincode__c: $.Pincode,
+	Phone_Number__c: $.Phone_Number,
+	Salary__c: $.Salary
+
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:create-job-bulk-api-v2 doc:name="Create job bulk api v 2" doc:id="31f95207-05be-42e5-8bf8-fc607c7443d6" config-ref="Salesforce_Config" operation="insert" objectType="Employee__c" lineEnding="CRLF" externalIdFieldName="Employee_ID__c"/>
+		<set-variable value="#[payload.id]" doc:name="Set Variable" doc:id="ee5addbf-b6d7-41f3-b618-2f076516a42f" variableName="id"/>
+		<until-successful maxRetries="5" doc:name="Until Successful" doc:id="dbc0636c-2bb2-4517-901b-8ac150600560" >
+			<scatter-gather doc:name="Scatter-Gather" doc:id="bb80f260-6bde-4aac-9ca7-5cdcf39f7dc4" target="2">
+			<route>
+				<salesforce:retrieve-job-successful-results-bulk-v2 doc:name="Retrieve job successful results bulk v 2" doc:id="fdf6a021-a8f2-4986-bb99-a25c6265aab2" config-ref="Salesforce_Config" id="#[vars.id]" />
+				<ee:transform doc:name="Transform Message" doc:id="c53fc0cc-6820-4e0a-830b-916520d6ac96">
+						<ee:message>
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+ payload]]></ee:set-payload>
+						</ee:message>
+						<ee:variables>
+							<ee:set-variable variableName="success" ><![CDATA[%dw 2.0
+output application/json
+---
+ payload.originalFields map ((item, index) -> 
+ "Employee_ID__c":item.Employee_ID__c 
+
+ 
+ )
+  ]]></ee:set-variable>
+						</ee:variables>
+					</ee:transform>
+				<sftp:write doc:name="Write" doc:id="179a7560-67dd-46f2-9565-bedeaf891df0" config-ref="SFTP_Config" path="/training/alagar_training/successful/successful" mode="APPEND" />
+					<ee:transform doc:name="Transform Message" doc:id="e3c88c1f-5a67-45a2-ac41-464be076f205" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+ vars.success]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+					<email:send doc:name="Send" doc:id="e95d291d-3de8-4715-910b-773d998f0af6" config-ref="Email_SMTP" fromAddress="alagarsamyp@dwinsoft.in" subject="Success">
+				<email:to-addresses>
+					<email:to-address value="alagarsamyp@dwinsoft.in" />
+							<email:to-address value="yogesh@dwinsoft.in" />
+				</email:to-addresses>
+				<email:attachments><![CDATA[#[{
+	"send.csv":payload
+}]]]></email:attachments>
+			</email:send>
+			</route>
+			<route>
+				<salesforce:retrieve-job-failed-results-bulk-v2 doc:name="Retrieve job failed results bulk v 2" doc:id="e38d6a26-29a2-468c-8fd7-00ed33305786" config-ref="Salesforce_Config" id="#[vars.id]" />
+					<ee:transform doc:name="Transform Message" doc:id="e89c9367-e887-479f-b0a9-9f36c03f946d">
+						<ee:message>
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+						</ee:message>
+						<ee:variables>
+							<ee:set-variable variableName="error"><![CDATA[
+
+%dw 2.0
+output application/json
+
+
+---
+payload map{
+    "Employee_ID__c":$.originalFields.Employee_ID__c,
+    "errorMessage": $.errorMessage
+}]]></ee:set-variable>
+						</ee:variables>
+					</ee:transform>
+				<sftp:write doc:name="Write" doc:id="e8cfbfd7-f17c-40ad-8d94-9f2a96a6d27c" config-ref="SFTP_Config" path="/training/alagar_training/error/error.csv" mode="APPEND" />
+					<ee:transform doc:name="Transform Message" doc:id="dce3994b-dbdf-4550-9f26-27d77f32a551" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+ vars.error]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+					<email:send doc:name="Send" doc:id="930fee04-6845-4b38-9e01-8ed8e00e3be4" config-ref="Email_SMTP" fromAddress="alagarsamyp@dwinsoft.in" subject="Erorr">
+						<email:to-addresses >
+							<email:to-address value="alagarsamyp@dwinsoft.in" />
+							<email:to-address value="yogesh@dwinsoft.in" />
+						</email:to-addresses>
+						<email:attachments ><![CDATA[#[{
+	"send.csv":payload
+}]]]></email:attachments>
+					</email:send>
+			</route>
+		</scatter-gather>
+			<logger level="INFO" doc:name="Logger" doc:id="79e2ef46-b5ab-45b4-8f42-6b26d7c69952" message="end"/>
+		</until-successful>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="salesforce Error handling" doc:id="c381e134-2ab3-460c-9b86-297a8bc101b2" type="SALESFORCE:CONNECTIVITY, SALESFORCE:INVALID_INPUT, SALESFORCE:INVALID_RESPONSE, SALESFORCE:LIMIT_EXCEEDED, SALESFORCE:MUTUAL_AUTHENTICATION_FAILED, SALESFORCE:NOT_FOUND, SALESFORCE:RETRY_EXHAUSTED, SALESFORCE:TIMEOUT">
+				<ee:transform doc:name="Transform Message" doc:id="0f948c1e-2eb0-4d03-92bc-4de7713ca924" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map{
+	Employee_ID: payload.Employee_ID__c   ,
+	Name: payload.Name_c__c ,
+	City: payload.City__c ,
+	Pincode: payload.Pincode__c ,
+	Phone_Number: payload.Phone_Number__c,
+	Salary: payload.Salary__c 
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<set-variable value="#[payload]" doc:name="Set Variable" doc:id="85f316ef-c48e-434e-875b-ea53104eb45b" variableName="connectivity"/>
+			</on-error-continue>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="Email Error handling" doc:id="33788eb4-aea5-4aec-9480-3fe482085aa2" type="EMAIL:CONNECTIVITY, EMAIL:RETRY_EXHAUSTED, EMAIL:SEND">
+				<logger level="INFO" doc:name="Logger" doc:id="d84257b8-0ef2-4c72-924b-cd27f21bbfc8" message="payload"/>
+			</on-error-continue>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="SFTP Error handling" doc:id="f481a4dc-19ed-4c10-8986-ab43bfd31ce0" type="SFTP:ACCESS_DENIED, SFTP:CONNECTIVITY, SFTP:FILE_ALREADY_EXISTS, SFTP:FILE_LOCK, SFTP:ILLEGAL_CONTENT, SFTP:ILLEGAL_PATH, SFTP:RETRY_EXHAUSTED">
+				<logger level="INFO" doc:name="Logger" doc:id="aee92742-c10c-4c7d-a88f-5fa51f09ee8b" message="payload"/>
+			</on-error-continue>
+		</error-handler>
+		<!-- [STUDIO:"Until Successful"]				<until-successful maxRetries="5" doc:name="Until Successful" doc:id="8cb75151-2bbb-4052-ac6e-8545e37242dd">
+			<salesforce:get-job-state-bulk-api-v2 doc:name="Get job state bulk api v 2" doc:id="ee61f254-28e5-43b6-a43a-fa0642719cae" config-ref="Salesforce_Config" id="#[vars.id]"/>
+			<set-variable value="#[payload.state]" doc:name="Set Variable" doc:id="43a72c2d-f84b-4acf-9422-848782d89234" variableName="state"/>
+			<choice doc:name="Choice" doc:id="d52168e0-85ef-4ead-94cd-56b21d9761b7">
+				<when />
+				<otherwise>
+				<logger level="INFO" doc:name="Logger" doc:id="db27c627-c29c-4048-8eeb-4721d942bc2e" message="default logger" />
+			</otherwise>
+					</choice>
+
+		</until-successful> [STUDIO] -->
+		
+	</flow>
+</mule>

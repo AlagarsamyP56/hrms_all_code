@@ -1,0 +1,30 @@
+http:
+ host: "0.0.0.0"
+ port: "8081"
+ path: "/api/*"
+
+
+ 
+userProfile_sapi:
+  
+ host: "userprofile-sapi.us-e2.cloudhub.io"
+ basePath: "/api/user-profile"
+ hierarchyInformation: "/hierarchyInformation"
+ emergencyDetails: "/emergencyDetails"
+ identityInformation: "/identityInformation"
+ payrollInformation: "/payrollInformation"
+ personalDetails: "/personalDetails"
+ profileImage: "/profileImage"
+ workInformation: "/workInformation"
+ professionalReferences: "/professionalReferences"
+ supportingDocuments: "/supportingDocuments"
+ 
+ hierarchyInformation_emp: "/hierarchyInformation/{EmployeeID}"
+ profileImage_emp: "/profileImage/{EmployeeID}"
+ supportingDocuments_emp: "/supportingDocuments/{EmployeeID}"
+ identityInformation_emp: "/identityInformation/{EmployeeID}"
+ payrollInformation_emp: "/payrollInformation/{EmployeeID}"
+ emergencyDetails_emp: "/emergencyDetails/{EmployeeID}"
+ workInformation_emp: "/workInformation/{EmployeeID}"
+ personalDetails_emp: "/personalDetails/{EmployeeID}"
+ professionalReferences_emp: "/professionalReferences/{EmployeeID}"

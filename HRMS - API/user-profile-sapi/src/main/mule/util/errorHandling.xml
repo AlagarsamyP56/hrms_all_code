@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+ ">
+	<sub-flow name="commonError" doc:id="bc3a364e-32eb-412a-a6de-8e920116564c" >
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  errorType: error.errorType.identifier  ,&#10;  timestamp: (now() &gt;&gt; "IST" as String {format: "yyyy-MM-dd HH:mm:ss.SSS"}),&#10;  errorDescription: error.detailedDescription&#10;  &#10;}]' doc:name="Set Payload" doc:id="81e3dcb2-d75a-4ee8-95f0-67fd93b5f6d2" />
+	</sub-flow>
+	<error-handler name="main-errorHandler" doc:id="f8d1f5d6-492d-49c2-b524-104c018de21c" >
+		<on-error-propagate type="APIKIT:BAD_REQUEST">
+                <set-variable value="400" doc:name="httpStatus 400" doc:id="3e4d2819-c3e1-4e6e-9f03-6ec63bcda07d" variableName="httpStatus"/>
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	message: "Bad request",&#10;	statusCode: 400&#10;}]' doc:name="Bad request" doc:id="12659ab8-1783-4016-9257-4a8a859b3237" />
+            </on-error-propagate>
+		<on-error-propagate type="APIKIT:NOT_FOUND">
+			<set-variable value="404" doc:name="httpStatus 404" doc:id="1daed4ac-f0bc-4a2e-8159-e59b55241fbf" variableName="httpStatus" />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	message: "Resource not found",&#10;	statusCode: 404&#10;}]' doc:name="Resource not found" doc:id="0cc5db47-bce2-44f0-9e23-303cf12a9827" />
+            
+</on-error-propagate>
+		<on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+			<set-variable value="405" doc:name="httpStatus 405" doc:id="4a8e9e00-e9cd-4d19-b691-839e6b7b4a46" variableName="httpStatus" />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;		message: "Method not allowed",&#10;		statusCode: 405&#10;}]' doc:name="Method not allowed" doc:id="a9962b4c-368e-4dd3-9c01-2ade1da4aa2d" />
+            
+</on-error-propagate>
+		<on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+			<set-variable value="406" doc:name="httpStatus 406" doc:id="cc42ec69-9a97-4fac-a3ec-6a05a4cf932a" variableName="httpStatus" />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	message: "Not acceptable",&#10;	statusCode: 406&#10;}]' doc:name="Not acceptable" doc:id="322d3a60-ad0c-4837-ac24-8d9003147330" />
+            
+</on-error-propagate>
+		<on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+			<set-variable value="415" doc:name="httpStatus 415" doc:id="1720a17a-abdf-474a-8112-c46fbe204204" variableName="httpStatus" />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	message: "Unsupported media type",&#10;	statusCode: 415&#10;}]' doc:name="Unsupported media type" doc:id="6b6ea188-8c72-463f-acf2-ab2d34421cff" />
+            
+</on-error-propagate>
+		<on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+			<set-variable value="501" doc:name="httpStatus 501" doc:id="b202117a-ddcf-47cf-8097-d59db6d14698" variableName="httpStatus" />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	message: "Not Implemented",&#10;	statusCode: 501&#10;}]' doc:name="Not Implemented" doc:id="103d367f-4ef6-4016-8aa8-fd8e11a4a425" />
+            
+</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="ce98f9ae-ba92-4e7e-8e9a-854e65dbf508" type="DB:CONNECTIVITY, DB:RETRY_EXHAUSTED">
+			<flow-ref doc:name="commonError" doc:id="6ebcd9d8-86d4-4823-98f3-6110c9a5afec" name="commonError" />
+		</on-error-propagate>
+		<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="e037587e-d28c-4f1b-8e09-3be2d730747c" type="ANY">
+			<flow-ref doc:name="commonError" doc:id="f02fee60-0a69-4d78-9bf4-8912a0cb4529" name="commonError" />
+		</on-error-continue>
+	
+</error-handler>
+</mule>

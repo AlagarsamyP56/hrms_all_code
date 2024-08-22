@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule   xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+">
+	<sub-flow name="TotalhoursSub_Flow" doc:id="879e0ae5-196d-4b32-9a10-93af28588525" >
+		<until-successful maxRetries="${until.retries}" doc:name="Until Successful" doc:id="1c99f35e-d0b3-4f55-b25a-136145ea2266" millisBetweenRetries="${until.millisecs}">
+			<try doc:name="Try" doc:id="f53617e5-0b9b-4e9c-897a-75ba3701b640">
+			<logger level="INFO" doc:name="Before fetching entryHours from db" doc:id="e635a964-e52f-486e-9baa-6852f827ef70" message="Before fetching entryHours from db"/>
+				<db:select doc:name="fetching total entry hours of employee" doc:id="3ccced31-7f7a-4694-b926-f055055e086e" config-ref="Database_Config">
+			<db:sql><![CDATA[SELECT entry FROM public.attendance  where "employeeid" = :employeeid and "entrydate" = :entrydate;]]></db:sql>
+			<db:input-parameters><![CDATA[#[{employeeid: vars.EmployeeID ,
+entrydate: 	vars.entryDate
+}]]]></db:input-parameters>
+		</db:select>
+				<logger level="INFO" doc:name="After fetching entryHours from db" doc:id="8ff12210-24f0-4475-b342-26f621b3b5bb" message="After fetching entryHours from db"/>
+				<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  totalHours: payload.entry[0]&#10;}]" doc:name="responsePayload" doc:id="d201f4ca-a9de-409d-8de9-d865cad971a5" />
+				<error-handler ref="db-errorHandler" />
+		</try>
+		</until-successful>
+	</sub-flow>
+</mule>

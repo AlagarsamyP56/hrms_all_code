@@ -1,0 +1,2931 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="user-profile-papi"
+        prefix="user-profile-papi"
+        namespace="http://www.mulesoft.org/schema/mule/user-profile-papi"
+
+        xmlns="http://www.mulesoft.org/schema/mule/module"
+        xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+        xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+        xmlns:http="http://www.mulesoft.org/schema/mule/http"
+        
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+           http://www.mulesoft.org/schema/mule/module http://www.mulesoft.org/schema/mule/module/current/mule-module.xsd
+           http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+           
+           http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+
+
+    <property name="property_host" displayName="host" type="string"  summary="Host for consuming API"/>
+    <property name="property_port" displayName="port" type="string"  summary="Port for consuming API"/>
+    <property name="property_basePath" displayName="basePath" type="string" defaultValue="/" summary="Basepath for consuming API"/>
+    <property name="property_protocol" displayName="protocol" type="string"  summary="Protocol for consuming API"/>
+
+    <property name="property_proxyConfig" displayName="Proxy Config Reference" type="string" use="OPTIONAL" summary="Proxy config reference" tab="Proxy"/>
+    <property name="property_responseTimeout" displayName="Response timeout" type="string" defaultValue="" summary="Maximum time in milliseconds that the request element will block the execution of the flow waiting for the HTTP response."/>
+
+    <property name="property_client-id"
+ displayName="client-id"               type="string" 
+/>
+    <property name="property_client-secret"
+ displayName="client-secret"               type="string" 
+/>
+
+    
+
+    <http:request-config
+name="user-profile-papi-httpreq-config" xmlns:connection="true"
+responseTimeout="#[vars.property_responseTimeout]"
+basePath="#[vars.property_basePath]">
+<http:request-connection
+host="#[vars.property_host]"
+protocol="#[vars.property_protocol]"
+port="#[vars.property_port]"
+proxyConfig="#[vars.property_proxyConfig]"
+>
+</http:request-connection>
+</http:request-config>
+
+
+
+
+    <operation name="get-payroll-informations"  >
+        <parameters>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/payrollInformation"
+              method="GET"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="create-payroll-information"  >
+        <parameters>
+                <parameter name="create-payroll-information-request-data" type="create-payroll-information-request-type" use="REQUIRED" role="PRIMARY" />
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/payrollInformation"
+              method="POST"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+        <http:body>
+            <![CDATA[#[output application/json --- vars['create-payroll-information-request-data']]
+]]>
+        </http:body>
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="get-payroll-information-by-employee-id"  >
+        <parameters>
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/payrollInformation/{EmployeeID}"
+              method="GET"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="delete-payroll-information-by-employee-id"  >
+        <parameters>
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/payrollInformation/{EmployeeID}"
+              method="DELETE"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="update-payroll-information-by-employee-id"  >
+        <parameters>
+                <parameter name="update-payroll-information-by-employee-id-request-data" type="update-payroll-information-by-employee-id-request-type" use="REQUIRED" role="PRIMARY" />
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/payrollInformation/{EmployeeID}"
+              method="PATCH"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+        <http:body>
+            <![CDATA[#[output application/json --- vars['update-payroll-information-by-employee-id-request-data']]
+]]>
+        </http:body>
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="get-identity-informations"  >
+        <parameters>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/identityInformation"
+              method="GET"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="create-identity-information"  >
+        <parameters>
+                <parameter name="create-identity-information-request-data" type="create-identity-information-request-type" use="REQUIRED" role="PRIMARY" />
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/identityInformation"
+              method="POST"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+        <http:body>
+            <![CDATA[#[output application/json --- vars['create-identity-information-request-data']]
+]]>
+        </http:body>
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="get-identity-information-by-employee-id"  >
+        <parameters>
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/identityInformation/{EmployeeID}"
+              method="GET"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="delete-identity-information-by-employee-id"  >
+        <parameters>
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/identityInformation/{EmployeeID}"
+              method="DELETE"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="update-identity-information-by-employee-id"  >
+        <parameters>
+                <parameter name="update-identity-information-by-employee-id-request-data" type="update-identity-information-by-employee-id-request-type" use="REQUIRED" role="PRIMARY" />
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/identityInformation/{EmployeeID}"
+              method="PATCH"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+        <http:body>
+            <![CDATA[#[output application/json --- vars['update-identity-information-by-employee-id-request-data']]
+]]>
+        </http:body>
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="get-personal-details"  >
+        <parameters>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/personalDetails"
+              method="GET"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="create-personal-detail"  >
+        <parameters>
+                <parameter name="create-personal-detail-request-data" type="create-personal-detail-request-type" use="REQUIRED" role="PRIMARY" />
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/personalDetails"
+              method="POST"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+        <http:body>
+            <![CDATA[#[output application/json --- vars['create-personal-detail-request-data']]
+]]>
+        </http:body>
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="get-personal-detail-by-employee-id"  >
+        <parameters>
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/personalDetails/{EmployeeID}"
+              method="GET"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="delete-personal-detail-by-employee-id"  >
+        <parameters>
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/personalDetails/{EmployeeID}"
+              method="DELETE"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="update-personal-detail-by-employee-id"  >
+        <parameters>
+                <parameter name="update-personal-detail-by-employee-id-request-data" type="update-personal-detail-by-employee-id-request-type" use="REQUIRED" role="PRIMARY" />
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/personalDetails/{EmployeeID}"
+              method="PATCH"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+        <http:body>
+            <![CDATA[#[output application/json --- vars['update-personal-detail-by-employee-id-request-data']]
+]]>
+        </http:body>
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="get-professional-references"  >
+        <parameters>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/professionalReferences"
+              method="GET"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="create-professional-reference"  >
+        <parameters>
+                <parameter name="create-professional-reference-request-data" type="create-professional-reference-request-type" use="REQUIRED" role="PRIMARY" />
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/professionalReferences"
+              method="POST"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+        <http:body>
+            <![CDATA[#[output application/json --- vars['create-professional-reference-request-data']]
+]]>
+        </http:body>
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="get-professional-reference-by-employee-id"  >
+        <parameters>
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/professionalReferences/{EmployeeID}"
+              method="GET"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="delete-professional-reference-by-employee-id"  >
+        <parameters>
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/professionalReferences/{EmployeeID}"
+              method="DELETE"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="update-professional-reference-by-employee-id"  >
+        <parameters>
+                <parameter name="update-professional-reference-by-employee-id-request-data" type="update-professional-reference-by-employee-id-request-type" use="REQUIRED" role="PRIMARY" />
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/professionalReferences/{EmployeeID}"
+              method="PATCH"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+        <http:body>
+            <![CDATA[#[output application/json --- vars['update-professional-reference-by-employee-id-request-data']]
+]]>
+        </http:body>
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="get-emergency-details"  >
+        <parameters>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/emergencyDetails"
+              method="GET"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="create-emergency-detail"  >
+        <parameters>
+                <parameter name="create-emergency-detail-request-data" type="create-emergency-detail-request-type" use="REQUIRED" role="PRIMARY" />
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/emergencyDetails"
+              method="POST"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+        <http:body>
+            <![CDATA[#[output application/json --- vars['create-emergency-detail-request-data']]
+]]>
+        </http:body>
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="get-emergency-detail-by-employee-id"  >
+        <parameters>
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/emergencyDetails/{EmployeeID}"
+              method="GET"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="delete-emergency-detail-by-employee-id"  >
+        <parameters>
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/emergencyDetails/{EmployeeID}"
+              method="DELETE"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="update-emergency-detail-by-employee-id"  >
+        <parameters>
+                <parameter name="update-emergency-detail-by-employee-id-request-data" type="update-emergency-detail-by-employee-id-request-type" use="REQUIRED" role="PRIMARY" />
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/emergencyDetails/{EmployeeID}"
+              method="PATCH"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+        <http:body>
+            <![CDATA[#[output application/json --- vars['update-emergency-detail-by-employee-id-request-data']]
+]]>
+        </http:body>
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="get-hierarchy-informations"  >
+        <parameters>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/hierarchyInformation"
+              method="GET"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="create-hierarchy-information"  >
+        <parameters>
+                <parameter name="create-hierarchy-information-request-data" type="create-hierarchy-information-request-type" use="REQUIRED" role="PRIMARY" />
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/hierarchyInformation"
+              method="POST"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+        <http:body>
+            <![CDATA[#[output application/json --- vars['create-hierarchy-information-request-data']]
+]]>
+        </http:body>
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="get-hierarchy-information-by-employee-id"  >
+        <parameters>
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/hierarchyInformation/{EmployeeID}"
+              method="GET"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="delete-hierarchy-information-by-employee-id"  >
+        <parameters>
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/hierarchyInformation/{EmployeeID}"
+              method="DELETE"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="update-hierarchy-information-by-employee-id"  >
+        <parameters>
+                <parameter name="update-hierarchy-information-by-employee-id-request-data" type="update-hierarchy-information-by-employee-id-request-type" use="REQUIRED" role="PRIMARY" />
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/hierarchyInformation/{EmployeeID}"
+              method="PATCH"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+        <http:body>
+            <![CDATA[#[output application/json --- vars['update-hierarchy-information-by-employee-id-request-data']]
+]]>
+        </http:body>
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="get-work-informations"  >
+        <parameters>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/workInformation"
+              method="GET"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="create-work-information"  >
+        <parameters>
+                <parameter name="create-work-information-request-data" type="create-work-information-request-type" use="REQUIRED" role="PRIMARY" />
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/workInformation"
+              method="POST"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+        <http:body>
+            <![CDATA[#[output application/json --- vars['create-work-information-request-data']]
+]]>
+        </http:body>
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="get-work-information-by-employee-id"  >
+        <parameters>
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/workInformation/{EmployeeID}"
+              method="GET"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="delete-work-information-by-employee-id"  >
+        <parameters>
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/workInformation/{EmployeeID}"
+              method="DELETE"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="update-work-information-by-employee-id"  >
+        <parameters>
+                <parameter name="update-work-information-by-employee-id-request-data" type="update-work-information-by-employee-id-request-type" use="REQUIRED" role="PRIMARY" />
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/workInformation/{EmployeeID}"
+              method="PATCH"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+        <http:body>
+            <![CDATA[#[output application/json --- vars['update-work-information-by-employee-id-request-data']]
+]]>
+        </http:body>
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="get-supporting-documents"  >
+        <parameters>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/supportingDocuments"
+              method="GET"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'multipart/form-data' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="multipart/form-data" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="create-supporting-document"  >
+        <parameters>
+                <parameter name="create-supporting-document-request-data" type="create-supporting-document-request-type::{http://validationnamespace.raml.org}root" use="REQUIRED" role="PRIMARY" />
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/supportingDocuments"
+              method="POST"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+        <http:body>
+            <![CDATA[#[
+%dw 2.0
+output multipart/form-data
+boundary='rc34b21aa'
+---
+parts : {
+
+EmployeeID : {
+headers : {
+"Content-Type": "text/plain"
+},
+content : vars['create-supporting-document-request-data']['root']['EmployeeID']},
+SSLC_MarksheetCertificate : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['create-supporting-document-request-data']['root']['SSLC_MarksheetCertificate']},
+UG_DegreeCertificate : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['create-supporting-document-request-data']['root']['UG_DegreeCertificate']},
+Certificate1_Mulesoft : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['create-supporting-document-request-data']['root']['Certificate1_Mulesoft']},
+Certificate2_Mulesoft : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['create-supporting-document-request-data']['root']['Certificate2_Mulesoft']},
+Certificate3_Mulesoft : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['create-supporting-document-request-data']['root']['Certificate3_Mulesoft']},
+AadhaarCard : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['create-supporting-document-request-data']['root']['AadhaarCard']},
+BackgroundVerification1 : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['create-supporting-document-request-data']['root']['BackgroundVerification1']},
+PreviousEmployerJoiningLetters : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['create-supporting-document-request-data']['root']['PreviousEmployerJoiningLetters']},
+PreviousEmployerAppointmentOrders : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['create-supporting-document-request-data']['root']['PreviousEmployerAppointmentOrders']},
+OtherTechCertifications : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['create-supporting-document-request-data']['root']['OtherTechCertifications']},
+PanCard : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['create-supporting-document-request-data']['root']['PanCard']},
+HSC_PUC_CertificateMarksheet : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['create-supporting-document-request-data']['root']['HSC_PUC_CertificateMarksheet']},
+PG_DegreeCertificate : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['create-supporting-document-request-data']['root']['PG_DegreeCertificate']},
+Last_3_Month_Payslips : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['create-supporting-document-request-data']['root']['Last_3_Month_Payslips']},
+PreviousEmployerRelievingLetter : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['create-supporting-document-request-data']['root']['PreviousEmployerRelievingLetter']},
+OfferLetter : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['create-supporting-document-request-data']['root']['OfferLetter']},
+Resume : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['create-supporting-document-request-data']['root']['Resume']}}
+]]]>
+        </http:body>
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'multipart/form-data' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="multipart/form-data" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="get-supporting-document-by-employee-id"  >
+        <parameters>
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/supportingDocuments/{EmployeeID}"
+              method="GET"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'multipart/form-data' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="multipart/form-data" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="delete-supporting-document-by-employee-id"  >
+        <parameters>
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/supportingDocuments/{EmployeeID}"
+              method="DELETE"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="update-supporting-document-by-employee-id"  >
+        <parameters>
+                <parameter name="update-supporting-document-by-employee-id-request-data" type="update-supporting-document-by-employee-id-request-type::{http://validationnamespace.raml.org}root" use="REQUIRED" role="PRIMARY" />
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/supportingDocuments/{EmployeeID}"
+              method="PATCH"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+        <http:body>
+            <![CDATA[#[
+%dw 2.0
+output multipart/form-data
+boundary='rc34b21aa'
+---
+parts : {
+
+SSLC_MarksheetCertificate : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['update-supporting-document-by-employee-id-request-data']['root']['SSLC_MarksheetCertificate']},
+UG_DegreeCertificate : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['update-supporting-document-by-employee-id-request-data']['root']['UG_DegreeCertificate']},
+Certificate1_Mulesoft : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['update-supporting-document-by-employee-id-request-data']['root']['Certificate1_Mulesoft']},
+Certificate2_Mulesoft : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['update-supporting-document-by-employee-id-request-data']['root']['Certificate2_Mulesoft']},
+Certificate3_Mulesoft : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['update-supporting-document-by-employee-id-request-data']['root']['Certificate3_Mulesoft']},
+AadhaarCard : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['update-supporting-document-by-employee-id-request-data']['root']['AadhaarCard']},
+BackgroundVerification1 : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['update-supporting-document-by-employee-id-request-data']['root']['BackgroundVerification1']},
+PreviousEmployerJoiningLetters : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['update-supporting-document-by-employee-id-request-data']['root']['PreviousEmployerJoiningLetters']},
+PreviousEmployerAppointmentOrders : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['update-supporting-document-by-employee-id-request-data']['root']['PreviousEmployerAppointmentOrders']},
+OtherTechCertifications : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['update-supporting-document-by-employee-id-request-data']['root']['OtherTechCertifications']},
+PanCard : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['update-supporting-document-by-employee-id-request-data']['root']['PanCard']},
+HSC_PUC_CertificateMarksheet : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['update-supporting-document-by-employee-id-request-data']['root']['HSC_PUC_CertificateMarksheet']},
+PG_DegreeCertificate : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['update-supporting-document-by-employee-id-request-data']['root']['PG_DegreeCertificate']},
+Last_3_Month_Payslips : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['update-supporting-document-by-employee-id-request-data']['root']['Last_3_Month_Payslips']},
+PreviousEmployerRelievingLetter : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['update-supporting-document-by-employee-id-request-data']['root']['PreviousEmployerRelievingLetter']},
+OfferLetter : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['update-supporting-document-by-employee-id-request-data']['root']['OfferLetter']},
+Resume : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['update-supporting-document-by-employee-id-request-data']['root']['Resume']}}
+]]]>
+        </http:body>
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'multipart/form-data' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="multipart/form-data" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="get-profile-images"  >
+        <parameters>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/profileImage"
+              method="GET"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'multipart/form-data' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="multipart/form-data" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="create-profile-image"  >
+        <parameters>
+                <parameter name="create-profile-image-request-data" type="create-profile-image-request-type::{http://validationnamespace.raml.org}root" use="REQUIRED" role="PRIMARY" />
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/profileImage"
+              method="POST"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+        <http:body>
+            <![CDATA[#[
+%dw 2.0
+output multipart/form-data
+boundary='rc34b21aa'
+---
+parts : {
+
+EmployeeID : {
+headers : {
+"Content-Type": "text/plain"
+},
+content : vars['create-profile-image-request-data']['root']['EmployeeID']},
+Image : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['create-profile-image-request-data']['root']['Image']}}
+]]]>
+        </http:body>
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'multipart/form-data' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="multipart/form-data" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="get-profile-image-by-employee-id"  >
+        <parameters>
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/profileImage/{EmployeeID}"
+              method="GET"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'multipart/form-data' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="multipart/form-data" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="delete-profile-image-by-employee-id"  >
+        <parameters>
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/profileImage/{EmployeeID}"
+              method="DELETE"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'application/json' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="application/json" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+    <operation name="update-profile-image-by-employee-id"  >
+        <parameters>
+                <parameter name="update-profile-image-by-employee-id-request-data" type="update-profile-image-by-employee-id-request-type::{http://validationnamespace.raml.org}root" use="REQUIRED" role="PRIMARY" />
+                <parameter name="employee-id"
+                    type="string"
+                    use="REQUIRED"
+/>
+            <parameter name="request-streaming-mode" displayName="Request streaming mode" type="request-streaming-mode-enum" use="OPTIONAL" tab="Advanced" />
+        </parameters>
+        <body>
+<http:request config-ref="user-profile-papi-httpreq-config"
+              path="/user-profile/profileImage/{EmployeeID}"
+              method="PATCH"
+              requestStreamingMode='#[vars["request-streaming-mode"]]'
+>
+        <mule:error-mapping sourceType="HTTP:PARSING" targetType="USER-PROFILE-PAPI:PARSING" />
+        <mule:error-mapping sourceType="HTTP:TIMEOUT" targetType="USER-PROFILE-PAPI:TIMEOUT" />
+        <mule:error-mapping sourceType="HTTP:SECURITY" targetType="USER-PROFILE-PAPI:SECURITY" />
+        <mule:error-mapping sourceType="HTTP:CONNECTIVITY" targetType="USER-PROFILE-PAPI:CONNECTIVITY" />
+        <mule:error-mapping sourceType="HTTP:BAD_REQUEST" targetType="USER-PROFILE-PAPI:BAD_REQUEST" />
+        <mule:error-mapping sourceType="HTTP:UNAUTHORIZED" targetType="USER-PROFILE-PAPI:UNAUTHORIZED" />
+        <mule:error-mapping sourceType="HTTP:FORBIDDEN" targetType="USER-PROFILE-PAPI:FORBIDDEN" />
+        <mule:error-mapping sourceType="HTTP:METHOD_NOT_ALLOWED" targetType="USER-PROFILE-PAPI:METHOD_NOT_ALLOWED" />
+        <mule:error-mapping sourceType="HTTP:NOT_FOUND" targetType="USER-PROFILE-PAPI:NOT_FOUND" />
+        <mule:error-mapping sourceType="HTTP:NOT_ACCEPTABLE" targetType="USER-PROFILE-PAPI:NOT_ACCEPTABLE" />
+        <mule:error-mapping sourceType="HTTP:UNSUPPORTED_MEDIA_TYPE" targetType="USER-PROFILE-PAPI:UNSUPPORTED_MEDIA_TYPE" />
+        <mule:error-mapping sourceType="HTTP:TOO_MANY_REQUESTS" targetType="USER-PROFILE-PAPI:TOO_MANY_REQUESTS" />
+        <mule:error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="USER-PROFILE-PAPI:INTERNAL_SERVER_ERROR" />
+        <mule:error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="USER-PROFILE-PAPI:SERVICE_UNAVAILABLE" />
+        <mule:error-mapping sourceType="HTTP:RETRY_EXHAUSTED" targetType="USER-PROFILE-PAPI:RETRY_EXHAUSTED" />
+        <http:body>
+            <![CDATA[#[
+%dw 2.0
+output multipart/form-data
+boundary='rc34b21aa'
+---
+parts : {
+
+Image : {
+headers : {
+"Content-Type": "application/octet-stream"
+},
+content : vars['update-profile-image-by-employee-id-request-data']['root']['Image']}}
+]]]>
+        </http:body>
+
+        <http:headers>
+            <![CDATA[#[ ( { 'Accept': 'multipart/form-data' } ++ { 'client_id': vars['property_client-id'] } ++ { 'client_secret': vars['property_client-secret'] } ) filterObject $ != null ]]]>
+        </http:headers>
+        <http:uri-params>
+            <![CDATA[#[ { 'EmployeeID': vars['employee-id'] } filterObject $ != null ]]]>
+        </http:uri-params>
+</http:request>
+    <mule:set-payload value="#[payload]" mimeType="multipart/form-data" />
+        </body>
+            <output type="string" />
+        <output-attributes type="java::org.mule.extension.http.api.HttpResponseAttributes" />
+
+        <errors>
+                <error type="PARSING"/>
+                <error type="TIMEOUT"/>
+                <error type="SECURITY"/>
+                <error type="CONNECTIVITY"/>
+                <error type="BAD_REQUEST"/>
+                <error type="UNAUTHORIZED"/>
+                <error type="FORBIDDEN"/>
+                <error type="METHOD_NOT_ALLOWED"/>
+                <error type="NOT_FOUND"/>
+                <error type="NOT_ACCEPTABLE"/>
+                <error type="UNSUPPORTED_MEDIA_TYPE"/>
+                <error type="TOO_MANY_REQUESTS"/>
+                <error type="INTERNAL_SERVER_ERROR"/>
+                <error type="SERVICE_UNAVAILABLE"/>
+                <error type="RETRY_EXHAUSTED"/>
+        </errors>
+    </operation>
+
+</module>

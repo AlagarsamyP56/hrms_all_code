@@ -1,0 +1,158 @@
+#%RAML 1.0
+title: user_profile-sapi
+description: ""
+version: 1.0
+protocols: [HTTP ,HTTPS]
+mediaType:  
+- application/json
+uses:
+  "commonlib" : libraries/commonLibrary.raml
+resourceTypes:
+  "resources": !include resourceTypes/resourceTypes.raml 
+  "resourceType-uri": !include resourceTypes/resourceType-uri.raml
+
+
+
+/user-profile:
+  /payrollInformation:
+    type:
+      
+      "resources":
+        GetResponseExample: !include Examples/ResponseExample/getPayrollInformationExample.raml
+        postTypeName:  
+                   commonlib.postPayrollInformation
+        postRequestExample:  !include Examples/RequestExample/payrollInformation/postPayrollInformationExample.raml
+      
+    /{EmployeeID}:
+     type:
+        "resourceType-uri":
+          GetResponseExample: !include Examples/ResponseExample/getPayrollInformationExample.raml
+          
+          UpdateType: commonlib.updatePayrollInformation 
+          UpdateRequestExample: !include Examples/RequestExample/payrollInformation/updatePayrollInformationExample.raml
+        
+
+      
+  /identityInformation:
+    type:
+      resources:
+        GetResponseExample: !include Examples/ResponseExample/getIdentityInformationExample.raml
+        postTypeName:  
+                   commonlib.postIdentityInformation
+        postRequestExample:  !include Examples/RequestExample/identityInformation/postIdentityInformationExample.raml
+
+    /{EmployeeID}:
+     type:
+        "resourceType-uri":
+          GetResponseExample: !include Examples/ResponseExample/getIdentityInformationExample.raml
+          
+          UpdateType: commonlib.updateIdentityInformation 
+          UpdateRequestExample: !include Examples/RequestExample/identityInformation/updateIdentityInformationExample.raml
+        
+  /personalDetails:
+    type:
+      resources:
+        GetResponseExample:  !include Examples/ResponseExample/getPersonalDetailsExample.raml
+        postTypeName:  
+                   commonlib.postpersonalDetails
+        postRequestExample:  !include Examples/RequestExample/personalDetails/postPersonalDetailsExample.raml
+
+    /{EmployeeID}:
+     type:
+        "resourceType-uri":
+          GetResponseExample: !include Examples/ResponseExample/getPersonalDetailsExample.raml
+          
+          UpdateType: commonlib.updatepersonalDetails 
+          UpdateRequestExample: !include Examples/RequestExample/personalDetails/updatePersonalDetailsExample.raml
+
+  /professionalReferences:
+    type:
+      resources:
+        GetResponseExample: !include Examples/ResponseExample/getProfessionalReferenceExample.raml
+        postTypeName:  
+                   commonlib.postprofessionalReferences
+        postRequestExample:  !include Examples/RequestExample/professionalReference/postProfessionalReferenceExample.raml
+
+    /{EmployeeID}:
+      type:
+        "resourceType-uri":
+          GetResponseExample: !include Examples/ResponseExample/getProfessionalReferenceExample.raml
+          
+          UpdateType: commonlib.updateprofessionalReferences 
+          UpdateRequestExample: !include Examples/RequestExample/professionalReference/updateProfessionalReferenceExample.raml
+
+  /emergencyDetails:
+    type:
+      resources:
+        GetResponseExample:  !include Examples/ResponseExample/getEmergencyDetailsExample.raml
+        postTypeName:  
+                   commonlib.postEmergencyDetails
+        postRequestExample:  !include Examples/RequestExample/emergencyDetails/postEmergencyDetailsExample.raml
+    /{EmployeeID}:
+      type:
+        "resourceType-uri":
+          GetResponseExample: !include Examples/ResponseExample/getEmergencyDetailsExample.raml
+          
+          UpdateType: commonlib.updateEmergencyDetails 
+          UpdateRequestExample: !include Examples/RequestExample/emergencyDetails/updateEmergencyDetailsExample.raml
+
+  /hierarchyInformation:
+    type:
+      resources:
+        GetResponseExample: !include Examples/ResponseExample/getHierarchyInformationExample.raml
+        postTypeName:  
+                   commonlib.postHierarchyInformation
+        postRequestExample:  !include Examples/RequestExample/hierarchyInformation/postHierarchyInformationExample.raml
+    /{EmployeeID}:
+     type:
+        "resourceType-uri":
+          GetResponseExample: !include Examples/ResponseExample/getHierarchyInformationExample.raml
+          
+          UpdateType: commonlib.updateHierarchyInformation 
+          UpdateRequestExample: !include Examples/RequestExample/hierarchyInformation/updateHierarchyInformationExample.raml
+
+  /workInformation:
+     type:
+      resources:
+        GetResponseExample: !include Examples/ResponseExample/getWorkInformationExample.raml
+        postTypeName:  
+                   commonlib.postWorkInformation
+        postRequestExample:  !include Examples/RequestExample/workInformation/postWorkInformationExample.raml 
+     /{EmployeeID}:
+      type:
+        "resourceType-uri":
+          GetResponseExample: !include Examples/ResponseExample/getWorkInformationExample.raml
+          
+          UpdateType: commonlib.updateWorkInformation 
+          UpdateRequestExample: !include Examples/RequestExample/workInformation/updateWorkInformationExample.raml
+  
+
+  /supportingDocuments:
+     type:
+      resources:
+        GetResponseExample: !include Examples/ResponseExample/getSupportingDocumentsExample.raml
+        postTypeName:  
+                   commonlib.postSupportingDocuments
+        postRequestExample:  !include Examples/RequestExample/supportingDocuments/postSupportingDocumentsExample.raml
+     /{EmployeeID}:
+      type:
+        "resourceType-uri":
+          GetResponseExample: !include Examples/ResponseExample/getSupportingDocumentsExample.raml
+          
+          UpdateType: commonlib.updateSupportingDocuments 
+          UpdateRequestExample: !include Examples/RequestExample/supportingDocuments/updateSupportingDocumentsExample.raml
+
+  /profileImage:  
+     type:
+      resources:
+        GetResponseExample: !include Examples/ResponseExample/getProfileImageExample.raml
+        postTypeName:  
+                   commonlib.postProfileImage
+        postRequestExample:  !include Examples/RequestExample/profileImage/postProfileImageExample.raml
+     /{EmployeeID}:
+      type:
+        "resourceType-uri":
+          GetResponseExample: !include Examples/ResponseExample/getProfileImageExample.raml
+          
+          UpdateType: commonlib.updateProfileImage 
+          UpdateRequestExample: !include Examples/RequestExample/profileImage/updateProfileImageExample.raml

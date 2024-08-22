@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+	<flow name="commonRequestSub_Flow" doc:id="a1622186-6cbf-49d7-82eb-a3a66d9325bc" >
+		<logger level="INFO" doc:name="Before Calling User Profile API" doc:id="5468c6c3-a882-4197-be12-d927e831b1cb" message='Before Calling  User Profile API || #[now() as String {format:"yyyy.MM.dd HH:mm:ss.SSS" }]' />
+		<http:request method="#[vars.Method]" doc:name="User Profile API" doc:id="ef3444d2-e28c-426a-8946-b51a9edec626" config-ref="HTTP_Request_configuration" path="#[vars.path]">
+			<error-mapping targetType="REQUEST:ERROR" />
+			<http:uri-params><![CDATA[#[output application/java
+---
+{
+	"EmployeeID" : vars.EmployeeID
+}]]]></http:uri-params>
+		</http:request>
+		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="bce42cb1-6825-42b8-a202-b6a2dcbdc960" variableName="GetResponse" />
+		<logger level="INFO" doc:name="After Calling User Profile API" doc:id="8abe048a-3fa4-4600-84b5-37cec934f7fd" message='After Calling  User Profile API || #[now() as String {format:"yyyy.MM.dd HH:mm:ss.SSS" }]' />
+		<error-handler ref="request-errorHandler" />
+	</flow>
+	<flow name="commonRequestSub_Flow1" doc:id="3293ac70-830a-4f39-8bdc-4087932d47a3" >
+		<logger level="INFO" doc:name="Before Calling User Profile API" doc:id="eb65b68b-5dc4-40ce-9c2b-02656472958e" message='Before Calling  User Profile API || #[now() as String {format:"yyyy.MM.dd HH:mm:ss.SSS" }]' />
+		<http:request method="#[vars.Method]" doc:name="User Profile API" doc:id="f21af0e9-5019-47d2-9e6c-3d3c2d8c8dda" config-ref="HTTP_Request_configuration" path="#[vars.path]">
+			<error-mapping targetType="REQUEST:ERROR" />
+		</http:request>
+		<logger level="INFO" doc:name="After Calling User Profile API" doc:id="eb240585-e0e4-4f71-9fc0-bbc8893ab5c9" message='After Calling  User Profile API || #[now() as String {format:"yyyy.MM.dd HH:mm:ss.SSS" }]' />
+		<error-handler ref="request-errorHandler" />
+	</flow>
+</mule>

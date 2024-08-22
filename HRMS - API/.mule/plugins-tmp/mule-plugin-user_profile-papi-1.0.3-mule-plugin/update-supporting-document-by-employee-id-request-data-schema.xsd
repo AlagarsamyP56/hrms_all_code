@@ -1,0 +1,26 @@
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://validationnamespace.raml.org" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://validationnamespace.raml.org">
+    <element name="root">
+        <complexType>
+            <all>
+                <element minOccurs="0" name="SSLC_MarksheetCertificate" type="base64Binary"/>
+                <element minOccurs="0" name="UG_DegreeCertificate" type="base64Binary"/>
+                <element minOccurs="0" name="Certificate1_Mulesoft" type="base64Binary"/>
+                <element minOccurs="0" name="Certificate2_Mulesoft" type="base64Binary"/>
+                <element minOccurs="0" name="Certificate3_Mulesoft" type="base64Binary"/>
+                <element minOccurs="0" name="AadhaarCard" type="base64Binary"/>
+                <element minOccurs="0" name="BackgroundVerification1" type="base64Binary"/>
+                <element minOccurs="0" name="PreviousEmployerJoiningLetters" type="base64Binary"/>
+                <element minOccurs="0" name="PreviousEmployerAppointmentOrders" type="base64Binary"/>
+                <element minOccurs="0" name="OtherTechCertifications" type="base64Binary"/>
+                <element minOccurs="0" name="PanCard" type="base64Binary"/>
+                <element minOccurs="0" name="HSC_PUC_CertificateMarksheet" type="base64Binary"/>
+                <element minOccurs="0" name="PG_DegreeCertificate" type="base64Binary"/>
+                <element minOccurs="0" name="Last_3_Month_Payslips" type="base64Binary"/>
+                <element minOccurs="0" name="PreviousEmployerRelievingLetter" type="base64Binary"/>
+                <element minOccurs="0" name="OfferLetter" type="base64Binary"/>
+                <element minOccurs="0" name="Resume" type="base64Binary"/>
+                <any maxOccurs="unbounded" minOccurs="0" processContents="skip"/>
+            </all>
+        </complexType>
+    </element>
+</schema>

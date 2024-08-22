@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+	<sub-flow name="commonRequest_Sub_Flow" doc:id="63597402-b338-4580-968c-5ec8abb73fb6" >
+		<logger level="INFO" doc:name="Before Calling User Profile API" doc:id="5468c6c3-a882-4197-be12-d927e831b1cb" message='Before Calling  User Profile API || #[now() as String {format:"yyyy.MM.dd HH:mm:ss.SSS" }]'/>
+		<http:request method="#[vars.Method]" doc:name="Human Resources SAPI" doc:id="ef3444d2-e28c-426a-8946-b51a9edec626" config-ref="HumanResources_Request_configuration" path="#[vars.path]">
+			<error-mapping targetType="REQUEST:ERROR" />
+		</http:request>
+		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="bce42cb1-6825-42b8-a202-b6a2dcbdc960" variableName="GetResponse"/>
+		<logger level="INFO" doc:name="After Calling User Profile API" doc:id="8abe048a-3fa4-4600-84b5-37cec934f7fd" message='After Calling  User Profile API || #[now() as String {format:"yyyy.MM.dd HH:mm:ss.SSS" }]' />
+	</sub-flow>
+	<sub-flow name="notifications-sapi_Sub_Flow" doc:id="a95dbbd4-c743-4113-a31a-f13fd10dcd73" >
+		<logger level="INFO" doc:name="Before Calling Notifications SAPI" doc:id="ceeeb5f5-3f10-447c-8657-16c25bcf39b1" message='Before Calling Notifications SAPI || #[now() as String {format:"yyyy.MM.dd HH:mm:ss.SSS" }]' />
+		<http:request method="POST" doc:name="Notifications SAPI" doc:id="0326e44d-070f-45cb-b708-4eb3e34fa216" config-ref="Notifications_Request_config" path="#[vars.path]" >
+			<error-mapping targetType="REQUEST:ERROR" />
+		</http:request>
+		<logger level="INFO" doc:name="After Calling Notifications SAPI" doc:id="46a54190-0b64-4bb2-8d33-870ab2056a0c" message='After Calling Notifications SAPI || #[now() as String {format:"yyyy.MM.dd HH:mm:ss.SSS" }]' />
+	</sub-flow>
+</mule>

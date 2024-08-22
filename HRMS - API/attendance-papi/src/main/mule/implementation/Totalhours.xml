@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" 
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<sub-flow name="TotalhoursSub_Flow" doc:id="879e0ae5-196d-4b32-9a10-93af28588525" >
+		<until-successful maxRetries="${until.retries}" doc:name="Until Successful" doc:id="1c99f35e-d0b3-4f55-b25a-136145ea2266" millisBetweenRetries="${until.millisecs}">
+			<try doc:name="Try" doc:id="f53617e5-0b9b-4e9c-897a-75ba3701b640">
+				<logger level="INFO" doc:name="Before fetching holiday from leaveTracker-sapi" doc:id="369dc5bc-2b6e-4eae-a8ef-ad64f9dde8e2" message="Before fetching holiday from leaveTracker-sapi"/>
+				<http:request method="#[vars.method]" doc:name="leaveTracker-sapi" doc:id="43533b54-c1e2-413b-aba7-fdd7805ed5ad" config-ref="HTTP_Request_SAPI" path="#[vars.path]" target="holiday">
+					<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"Date" : vars.entryDate
+}]]]></http:query-params>
+				</http:request>
+				<logger level="INFO" doc:name="After fetching holiday from leaveTracker-sapi" doc:id="67765e86-7ede-4693-b0d2-d28347bafdfa" message="After fetching holiday from leaveTracker-sapi"/>
+				<logger level="INFO" doc:name="Before fetching entryHours from attendance-sapi" doc:id="e635a964-e52f-486e-9baa-6852f827ef70" message="Before fetching entryHours from attendance-sapi" />
+				<set-variable value="#[%dw 2.0&#10;output application/java&#10;---&#10;Mule::p('attendSapi.host')]" doc:name="Host Variable" doc:id="7584ea1f-2623-4b5f-8bca-317e2d24ddd2" variableName="host"/>
+				<set-variable value="#[%dw 2.0&#10;output application/java&#10;---&#10;Mule::p('attendSapi.totalhrsMethod')]" doc:name="Method Variable" doc:id="b2afb2a0-40cb-400d-ac37-e3939802a345" variableName="method"/>
+				<set-variable value="#[%dw 2.0&#10;output application/java&#10;---&#10;Mule::p('attendSapi.totalhrsPath')]" doc:name="Path Variable" doc:id="ebfe87c3-f196-48d2-b79f-15dc5303d8d9" variableName="path"/>
+				<set-variable value="#[%dw 2.0&#10;output application/java&#10;---&#10;Mule::p('attendSapi.basePath')]" doc:name="Base Path Variable" doc:id="654bfaf1-1750-4d00-b520-18c79005f9e9" variableName="basePath"/>
+				<http:request method="#[vars.method]" doc:name="attendSapi" doc:id="2b33c79a-f805-4ce7-b65e-3970e2a5d4a7" config-ref="HTTP_Request_SAPI" path='#[vars.path ++  "/{EmployeeID}"]'>
+					<http:uri-params><![CDATA[#[{EmployeeID: vars.EmployeeID}]]]></http:uri-params>
+					<http:query-params><![CDATA[#[output application/java
+---
+{
+	"Date" : vars.entryDate
+}]]]></http:query-params>
+				</http:request>
+				<logger level="INFO" doc:name="After fetching entryHours from attendance-sapi" doc:id="8ff12210-24f0-4475-b342-26f621b3b5bb" message="After fetching entryHours from attenfance-sapi" />
+				<choice doc:name="checking the date is holiday or  working day or weekend and whether he/she is present or absent" doc:id="709850fa-bf96-4765-8f12-507e417b86fd" >
+					<when expression="#[sizeOf(vars.holiday)&gt;=1 and payload.totalHours == null]">
+						<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;{message: &quot;It's a holiday&quot;,Holiday: vars.holiday[0].holiday &#10;}]" doc:name="Set Payload" doc:id="920bf0f1-9a92-4d7f-8e8d-4edc4c94193b" />
+					</when>
+					<when expression="#[sizeOf(vars.holiday)&gt;=1 and sizeOf(payload.totalHours)&gt;=1]">
+						<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;if(isOdd(sizeOf(payload.totalHours splitBy "|"))== true)&#10; {"in":(payload.totalHours splitBy  "|")[0],&#10;  "out": "-"}&#10;   else &#10;   {"in":(payload.totalHours splitBy  "|")[0],&#10;  "out": (payload.totalHours splitBy  "|")[-1]}]' doc:name="calculating in and out" doc:id="e3119cf6-8901-4e0d-bf69-13f13368446b" />
+						<choice doc:name="Choice" doc:id="96e9930c-5082-4853-a65b-f5c4d2ec36b4" >
+							<when expression='#[payload.out == "-"]'>
+								<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;{firstCheckedin: payload.in,&#10;  lastCheckedout: payload.out, date: vars.entryDate, holiday: vars.holiday[0].holiday }]" doc:name="Respones" doc:id="3f088ef7-b1e9-4af8-a21f-2f1fe4525018" />
+							</when>
+							<otherwise >
+								<set-payload value='#[%dw 2.0&#10;output application/json&#10;var Hour= (payload.in - payload.out).hours as String replace "-" with ""&#10;var Min = (payload.in - payload.out).minutes as String replace "-" with ""&#10;&#10;---&#10;  &#10;{&#10;  totalHours: (if(sizeOf(Hour)==1) "0" ++ Hour else Hour) ++ ":" ++ (if(sizeOf(Min)==1) "0" ++ Min else Min) ++ " Hrs",&#10;  &#10;  date: vars.entryDate,&#10;  firstCheckedin: payload.in,&#10;  lastCheckedout: payload.out,holiday: vars.holiday[0].holiday&#10;}]' doc:name="" doc:id="33fb1559-5d5b-491a-a7bf-2de2b926d382" />
+								<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;if(((payload.totalHours replace  &quot; Hrs&quot; with &quot;&quot;) as Time &lt; &quot;08:00&quot; as Time) == true) payload else payload ++ {status: &quot;present but It's a holiday&quot;}]" doc:name="Respones" doc:id="76194b05-8a80-4698-9cc1-ada67aa53965" />
+							</otherwise>
+						</choice>
+					</when>
+					<when expression="#[sizeOf(vars.holiday)== 0 and payload.totalHours == null]">
+						<set-payload value='#[%dw 2.0&#10;output application/json&#10;var e= vars.entryDate as Date {format: "dd-MM-yyyy"} &#10;&#10;&#10;---&#10;if(e as String {format: "ccc"} == ("Sat")) {status:"Weekend", Date: vars.entryDate} else if (e as String {format: "ccc"} == ("Sun")) {status:"Weekend", Date: vars.entryDate} &#10;&#10;else if (e == now() as Date {format: "dd-MM-yyyy"} ) {&#10;    "totalHours": "00:00 Hrs"}&#10;&#10;&#10;else {status:"Absent", Date: vars.entryDate}]' doc:name="Respones" doc:id="8b9da22a-6af0-4897-9550-4f0c06735c60" />
+					</when>
+					<otherwise >
+						<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;if(isOdd(sizeOf(payload.totalHours splitBy "|"))== true)&#10; {"in":(payload.totalHours splitBy  "|")[0],&#10;  "out": "-"}&#10;   else &#10;   {"in":(payload.totalHours splitBy  "|")[0],&#10;  "out": (payload.totalHours splitBy  "|")[-1]}]' doc:name="calculating in and out" doc:id="003db774-ea12-4de7-8389-143b11375cc8" />
+						<choice doc:name="Choice" doc:id="a01224f7-9612-469b-a59f-05c808fdbf64">
+							<when expression='#[payload.out == "-"]'>
+								<set-payload value='#[%dw 2.0&#10;output application/json&#10;&#10;&#10;&#10;var date= vars.entryDate as Date {format: "dd-MM-yyyy"} &#10;&#10;&#10;---&#10;if(date as String {format: "ccc"} == ("Sat")) {firstCheckedin: payload.in,&#10;  lastCheckedout: payload.out, date: vars.entryDate, status: "Weekend"} else if (date as String {format: "ccc"} == ("Sun")) {firstCheckedin: payload.in,&#10;  lastCheckedout: payload.out, date: vars.entryDate, status: "Weekend"} else &#10;{firstCheckedin: payload.in,&#10;  lastCheckedout: payload.out, date: vars.entryDate}]' doc:name="Response" doc:id="b37b8dd6-6baf-4be6-a34c-c797b7549ec3" />
+							</when>
+							<otherwise >
+								<set-payload value='#[%dw 2.0&#10;output application/json&#10;var Hour= (payload.in - payload.out).hours as String replace "-" with ""&#10;var Min = (payload.in - payload.out).minutes as String replace "-" with ""&#10;---&#10;&#10;{&#10;  totalHours: (if(sizeOf(Hour)==1) "0" ++ Hour else Hour) ++ ":" ++ (if(sizeOf(Min)==1) "0" ++ Min else Min) ++ " Hrs",&#10;  date: vars.entryDate,&#10;  firstCheckedin: payload.in,&#10;  lastCheckedout: payload.out&#10;}]' doc:name="Set Payload" doc:id="9e5bc10f-7f37-4ba2-a1f7-ce809419f8c0" />
+								<set-payload value='#[%dw 2.0&#10;output application/json&#10;&#10;---&#10;//if(((payload.totalHours replace  " Hrs" with "") as Time &lt; "08:00" as Time) == true) payload else payload ++ {status : "present"}&#10;if(((payload.totalHours replace  " Hrs" with "") as Time &lt; "08:00" as Time) == true and ((payload.date splitBy  "-")[-1 to 0] joinBy  "-") as Date &lt; now() as Date == true) payload ++  {status : "absent"}&#10;&#10;&#10;&#10; else if (((payload.totalHours replace  " Hrs" with "") as Time &lt; "08:00" as Time) == true and ((payload.date splitBy  "-")[-1 to 0] joinBy  "-") as Date &lt; now() as Date == false)payload&#10;&#10;else payload ++ {status : "present"}]' doc:name="Respones" doc:id="aec21e57-cddc-4edd-bf11-7532cf9937a6" />
+								<set-payload value="#[%dw 2.0&#10;output application/json&#10;var date= vars.entryDate as Date {format: &quot;dd-MM-yyyy&quot;} &#10;&#10;&#10;---&#10;if((date as String {format: &quot;ccc&quot;} == (&quot;Sat&quot;))and payload.status== null) payload ++ {status:&quot;weekend&quot;} else if ((date as String {format: &quot;ccc&quot;} == (&quot;Sun&quot;))and payload.status== null) payload  ++ {status:&quot;weekend&quot;}  else if &#10;&#10;((date as String {format: &quot;ccc&quot;} == (&quot;Sat&quot;))and payload.status == &quot;present&quot;) payload ++ {status:&quot;present but it's a weekend&quot;} -- {&quot;status&quot;: &quot;present&quot;}&#10;&#10;else if &#10;&#10;((date as String {format: &quot;ccc&quot;} == (&quot;Sun&quot;))and payload.status == &quot;present&quot;) payload ++ {status:&quot;present but it's a weekend&quot;} -- {&quot;status&quot;: &quot;present&quot;}&#10;&#10;else payload]" doc:name="Set Payload" doc:id="bab1764d-2488-404e-94e9-64838a536436" />
+							</otherwise>
+						</choice>
+					</otherwise>
+				</choice>
+				<error-handler ref="request-errorHandler" />
+				
+		</try>
+		</until-successful>
+	</sub-flow>
+</mule>

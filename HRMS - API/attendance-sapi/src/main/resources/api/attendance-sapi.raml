@@ -1,0 +1,85 @@
+#%RAML 1.0
+title: attendance-sapi
+description:  System API for tracking attendance of the employees
+version: 1.0
+mediaType:  
+- application/json
+protocols: [HTTP , HTTPS]
+
+uses:
+  Library: commonLibrary.raml
+
+  
+
+/attendance:
+  
+  /entry:
+    description: check-in and check-out entry of the employee
+    post:
+      is:
+        - Library.common-error
+      body:
+        application/json:
+          type: !include resources/dataTypes/entry-dataType.raml
+          example: !include resources/examples/entryPost-example.raml
+ 
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include resources/examples/entry-response-example.raml
+                     
+  /totalHours:
+  
+    /{EmployeeID}:
+      uriParameters:
+        EmployeeID:
+          required: true
+      get:
+        is:
+          - Library.common-error
+        description: Total number of hours the employee checked in on that date
+        queryParameters:
+          Date:
+            type: string
+            pattern: ^\d{2}-\d{2}-\d{4}$
+
+            required: true
+            
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include resources/examples/totalHours-example.raml
+                      
+    
+         
+                
+              
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+
+
+
+
+
+
+
+
+        
+            

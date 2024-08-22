@@ -1,0 +1,48 @@
+#%RAML 1.0 Library
+traits:
+  "errorResponse": !include exchange_modules/8f1968ec-ae72-424d-be0d-d4e44abb1bd1/errorresponse/1.0.0/errorresponse.raml
+
+  "security": !include exchange_modules/8f1968ec-ae72-424d-be0d-d4e44abb1bd1/security-client_id-enforcement/1.0.0/security-client_id-enforcement.raml
+
+types:
+### post method data type ###
+
+  "postPayrollInformation": !include ../dateType/payrollInformationDataType/postpayrollInformation.raml
+
+  "postIdentityInformation": !include ../dateType/identityInformationDatatype/postIdentityInformation.raml
+
+  "postpersonalDetails": !include ../dateType/personalDetailsDataType/postPersonalDetails.raml
+
+  "postprofessionalReferences": !include ../dateType/professionalReferencesDataType/postProfessionalReferences.raml
+  
+  "postEmergencyDetails": !include ../dateType/emergencyDetailsDataType/postEmergencyDetails.raml
+
+  "postHierarchyInformation": !include ../dateType/hierarchyInformationDataType/postHierarchyInformation.raml
+
+  "postWorkInformation": !include ../dateType/workInformationDataType/postWorkInformation.raml
+
+  "postSupportingDocuments": !include ../dateType/profileImageDataType/postProfileImage.raml
+
+  "postProfileImage": !include ../dateType/profileImageDataType/postProfileImage.raml
+
+
+### Upadate method data type ###
+
+  
+  "updatePayrollInformation": !include ../dateType/payrollInformationDataType/updatepayrollInformation.raml
+
+  "updateIdentityInformation": !include ../dateType/identityInformationDatatype/updateIdentityInformation.raml
+
+  "updatepersonalDetails": !include ../dateType/personalDetailsDataType/updatePersonalDetails.raml
+
+  "updateprofessionalReferences": !include ../dateType/professionalReferencesDataType/updateProfessionalReferences.raml
+  
+  "updateEmergencyDetails": !include ../dateType/emergencyDetailsDataType/updateEmergencyDetails.raml
+
+  "updateHierarchyInformation": !include ../dateType/hierarchyInformationDataType/updateHierarchyInformation.raml
+
+  "updateWorkInformation": !include ../dateType/workInformationDataType/updateWorkInformation.raml
+
+  "updateSupportingDocuments": !include ../dateType/profileImageDataType/updateProfileImage.raml
+
+  "updateProfileImage": !include ../dateType/profileImageDataType/updateProfileImage.raml

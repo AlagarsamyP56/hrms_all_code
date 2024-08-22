@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+      xmlns:file="http://www.mulesoft.org/schema/mule/file"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                          http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+                          http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd
+                          http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+                          http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
+    
+    <http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config">
+        <http:listener-connection host="0.0.0.0" port="8081"/>
+    </http:listener-config>
+    
+    <sftp:config name="SFTP_Config" doc:name="SFTP Config">
+        <sftp:connection host="gitlab.dwinsoft.in" username="dwinsoft_sftp" password="Good@123K" connectionTimeoutUnit="MINUTES" responseTimeoutUnit="MINUTES"/>
+    </sftp:config>
+    
+    <file:config name="File_Config" doc:name="File Config">
+        <file:connection workingDir="D:\HRMS"/>
+    </file:config>
+    
+    <flow name="sftp_fileFlow" doc:id="243e69d4-eecd-48a8-a0d6-48f8b7997614">
+        <http:listener doc:name="Listener" config-ref="HTTP_Listener_config" path="/file"/>
+        
+        <!-- Log incoming payload to inspect structure -->
+        <logger level="INFO" doc:name="Log Payload" message="#[payload]"/>
+
+        <!-- Parse and handle the multipart form data -->
+		<set-variable value='#[%dw 2.0&#10;import * from dw::core::Binaries&#10;&#10;output application/json&#10;&#10;---&#10;&#10;(payload.parts - "EmployeeID") mapObject ((value, key, index) -&gt; &#10;    {&#10;        (key): toBase64((value.content) as Binary)&#10;    }&#10;)]' doc:name="Set Variable" doc:id="baf20287-b737-44ae-9a19-187c49be1625" variableName="payload"/>
+		<ee:transform doc:name="Transform Message" doc:id="5c456541-94f6-48a0-8887-6a16636cad25">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable variableName="filePath" doc:name="Set File Path" value="#['D:\\HRMS\\' ++ &#10;            (payload.parts.EmployeeID.content as String)]"/>
+
+        <!-- Log the file path to verify correctness -->
+        <logger level="INFO" doc:name="Log File Path" message="File path: #[vars.filePath]"/>
+
+        <file:create-directory doc:name="Create directory" config-ref="File_Config" directoryPath="#[vars.filePath]"/>
+        
+        <!-- Additional operations, such as file writing or processing -->
+		<set-payload value="#[vars.payload]" doc:name="Set Payload" doc:id="c760958c-6c7b-4566-baed-5fd03717a5fe" />
+		<foreach doc:name="For Each" doc:id="0c32e359-6016-4ec1-a3d6-6a3093c29244" collection="#[payload]">
+			<logger level="INFO" doc:name="Logger" doc:id="7298e25f-7ce1-4c8c-832b-61b051fe1824" message="#[payload]"/>
+		</foreach>
+		<!-- [STUDIO:"For Each"]<foreach doc:name="For Each" doc:id="d1f383ef-fe79-4cd6-9910-68c0494fdea0" collection="#[payload&#93;">
+			<set-payload value='#[%dw 2.0&#10;import * from dw::core::Binaries&#10;output multipart/form-data&#10;&#45;&#45;-&#10;{&#10;    parts:{&#10;        base64Content:{&#10;            headers:{&#10;                "Content-Type":"application/pdf"&#10;            },&#10;            content: fromBase64(payload)&#10;            },&#10;        }&#10;}&#93;' doc:name="Set Payload" doc:id="ef8f73ee-8352-4688-8168-d83523d3a524" mimeType="application/pdf" />
+			<file:write doc:name="Write" doc:id="6adcb58a-d934-4815-8d6f-2e84a071a331" config-ref="File_Config" path="#[vars.filePath ++ '\\test.pdf'&#93;">
+		</file:write>
+		</foreach> [STUDIO] -->
+    
+</flow>
+	<flow name="sftp_fileFlow1" doc:id="6d04159e-9a13-4ae6-888a-49937d1d4def" >
+		<http:listener doc:name="Listener" doc:id="c3d9b7a2-0a0f-426f-a951-f08222da9d2d" config-ref="HTTP_Listener_config" path="/api"/>
+		<sftp:write doc:name="Write" doc:id="e71727e1-be06-4d0a-8323-2242e5f48f29" config-ref="SFTP_Config" path="/training/HRMS/new/test.txt">
+			<sftp:content ><![CDATA[#["test"]]]></sftp:content>
+		</sftp:write>
+		<logger level="INFO" doc:name="Logger" doc:id="dba3df21-8bcc-48f5-a19c-212525c59d2c" message="#[payload]"/>
+	</flow>
+
+</mule>

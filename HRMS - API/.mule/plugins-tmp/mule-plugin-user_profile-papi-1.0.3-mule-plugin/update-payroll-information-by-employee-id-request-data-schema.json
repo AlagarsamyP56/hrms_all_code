@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/updatePayrollInformation",
+  "definitions": {
+    "updatePayrollInformation": {
+      "type": "object",
+      "example": {
+        "DateOfBirth": "2002-06-08",
+        "Pincode": 123426
+      },
+      "additionalProperties": true,
+      "properties": {
+        "FirstName": {
+          "type": "string"
+        },
+        "LastName": {
+          "type": "string"
+        },
+        "Department": {
+          "type": "string"
+        },
+        "Designation": {
+          "type": "string"
+        },
+        "Competency": {
+          "type": "string"
+        },
+        "DateOfBirth": {
+          "type": "string",
+          "format": "date"
+        },
+        "Gender": {
+          "type": "string",
+          "enum": [
+            "Male",
+            "Female",
+            "Other"
+          ]
+        },
+        "PersonalEmailAddress": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+        },
+        "FathersName": {
+          "type": "string"
+        },
+        "Pincode": {
+          "type": "number"
+        },
+        "MiddleName": {
+          "type": "string"
+        },
+        "EmailAddress": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+        },
+        "Location": {
+          "type": "string"
+        },
+        "DateOfJoining": {
+          "type": "string",
+          "format": "date"
+        },
+        "PAN": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9 ]+$"
+        },
+        "AddressLine1": {
+          "type": "string"
+        },
+        "AddressLine2": {
+          "type": "string"
+        },
+        "City": {
+          "type": "string"
+        },
+        "AccountHoldersName": {
+          "type": "string"
+        },
+        "AccountNumber": {
+          "type": "string"
+        },
+        "PaymentMode": {
+          "type": "string"
+        },
+        "IFSCCode": {
+          "type": "string"
+        },
+        "PersonalMobileNumber": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}

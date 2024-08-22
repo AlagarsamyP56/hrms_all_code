@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/postWorkInformation",
+  "definitions": {
+    "postWorkInformation": {
+      "type": "object",
+      "example": {
+        "EmployeeID": "DW001",
+        "Age": 22,
+        "WorkPhoneNumber": 1234567890,
+        "NickName": "",
+        "Role": "MuleSoft Developer",
+        "EmploymentType": "Full-time",
+        "EmployeeStatus": "Active",
+        "SourceOfHire": ""
+      },
+      "additionalProperties": true,
+      "required": [
+        "EmployeeID"
+      ],
+      "properties": {
+        "EmployeeID": {
+          "type": "string"
+        },
+        "Age": {
+          "type": "number"
+        },
+        "WorkPhoneNumber": {
+          "type": "number"
+        },
+        "NickName": {
+          "type": "string"
+        },
+        "Role": {
+          "type": "string"
+        },
+        "EmploymentType": {
+          "type": "string"
+        },
+        "EmployeeStatus": {
+          "type": "string"
+        },
+        "SourceOfHire": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

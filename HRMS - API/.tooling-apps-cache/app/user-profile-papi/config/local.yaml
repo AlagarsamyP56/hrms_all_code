@@ -1,0 +1,24 @@
+http:
+ host: "0.0.0.0"
+ port: "8083"
+ path: "api/*"
+
+DB:
+ host: http://localhost:8081/api/user-profile/personalDetails/DW001
+ path: api/user-profile
+ 
+userProfile_sapi:
+ protocol: "http"
+ host: "localhost"
+ port: "8084"
+ basePath: "/api/user-profile"
+ hierarchyInformation: "/hierarchyInformation"
+ emergencyDetails: "/emergencyDetails"
+ identityInformation: "/identityInformation"
+ payrollInformation: "/payrollInformation"
+ personalDetails: "/personalDetails"
+ profileImage: "/profileImage"
+ workInformation: "/workInformation"
+ professionalReferences: "/professionalReferences"
+ supportingDocuments: "/supportingDocuments"
+ 

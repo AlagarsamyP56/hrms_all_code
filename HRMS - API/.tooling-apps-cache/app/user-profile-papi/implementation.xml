@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+ 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+	<sub-flow name="convert_to_Base64-Sub_Flow" doc:id="2fb3c1ba-97da-41c0-b153-c3b3a5b41e92" >
+		<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;&#10;vars.GetResponse filter  $.EmployeeID == vars.employeeID]" doc:name="Set Payload" doc:id="23888bda-3637-4229-a629-3cedf3541b67" />
+		<choice doc:name="Choice" doc:id="6eef73c4-5e8a-4c20-a678-550c6f55d101" >
+			<when expression="#[sizeOf(payload) &gt;0]" >
+				<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10; "image": vars.image&#10;}]' doc:name="Set Payload" doc:id="97f391f9-3e4c-443d-852d-84c50e595515" />
+				<set-variable value='#["PATCH"]' doc:name="Method Variable" doc:id="4f029a91-a614-48ba-bdbd-8ee2be309d7c" variableName='Method'/>
+				<flow-ref doc:name="User Profile API Flow Reference" doc:id="8d2e82d4-1d16-4bb4-8055-794e16d3ec20" name="commonRequestSub_Flow" />
+			</when>
+			<otherwise >
+				<set-payload value='#["The Payload is Invalid Content"]' doc:name="Set Payload" doc:id="bcf8a8c9-8bb0-47b5-ae3c-896c6036fc37" />
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="Delete_EmployeeID-Sub_Flow" doc:id="2a083939-07fa-4811-9cb4-909e70efe774" >
+		<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;&#10;vars.GetResponse filter  $.EmployeeID == vars.employeeID]" doc:name="Set Payload" doc:id="89067d0d-fd07-43d3-9da7-f7e7edfe85af" />
+		<choice doc:name="Choice" doc:id="ed7b9fe1-9ed3-4d79-8af7-86087da329ea" >
+			<when expression="#[sizeOf(payload) &gt;0]" >
+				<set-variable value='#["DELETE"]' doc:name="Method Variable" doc:id="a2adac6a-e204-49c5-8841-812762a031db" variableName="Method" />
+				<flow-ref doc:name="User Profile API " doc:id="994edc95-521e-47a5-b3c4-70a4b7eebe4d" name="commonRequestSub_Flow" />
+			</when>
+			<otherwise >
+				<set-payload value='#["The Payload is Invalid Content"]' doc:name="Set Payload" doc:id="b782a4cb-6218-43d3-930f-373e350cea66" />
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="Upadate_EmployeeID-Sub_Flow" doc:id="2b5eaa7d-4dbc-4018-8e9e-29824d938ef4" >
+		<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;&#10;vars.GetResponse filter  $.EmployeeID == vars.employeeID]" doc:name="Set Payload" doc:id="f1370847-a76f-4f3d-99d3-94da805ae464" />
+		<choice doc:name="Choice" doc:id="7cb481f2-091a-4f34-abba-751bdd48506b" >
+			<when expression="#[sizeOf(payload) &gt;0]" >
+				<set-variable value='#["PATCH"]' doc:name="Method Variable" doc:id="bdfd1cb5-bed8-4de4-a039-c75d8d4145ba" variableName="Method" />
+				<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;vars.payload]" doc:name="Set Payload" doc:id="83dda650-c1e5-4fa5-a92f-1d20100a61cf" />
+				<flow-ref doc:name="User Profile API " doc:id="b0df7a70-bbbc-4c34-ac89-fd6c341b218f" name="commonRequestSub_Flow" />
+			</when>
+			<otherwise >
+				<set-payload value='#["The Payload is Invalid Content"]' doc:name="Set Payload" doc:id="73e615f2-149c-4f9d-b87c-8672f8ad31e5" />
+			</otherwise>
+		</choice>
+	</sub-flow>
+</mule>

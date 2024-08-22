@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="15f1706d-f1f2-4787-83d8-6bdefcf06cdb" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<sftp:config name="SFTP_Config" doc:name="SFTP Config" doc:id="716d6cf0-8c52-4178-96f9-f752b9c96792" >
+		<sftp:connection host="${SFTP.HOST}" username="${SFTP.USER}" password="${SFTP.PASSWORD}" port="${SFTP.PORT}"/>
+	</sftp:config>
+	<email:smtp-config name="Email_SMTP" doc:name="Email SMTP" doc:id="d5d75405-9255-4ee0-86f0-f38d5bf83de3" >
+		<email:smtp-connection host="${SMTP.HOST}" port="${SMTP.PORT}" user="${SMTP.USER}" password="${SMTP.PASSWORD}" >
+			<email:properties >
+				<email:property key="mail.smtp.starttls.enable" value="true" />
+			</email:properties>
+		</email:smtp-connection>
+	</email:smtp-config>
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="8bb1a96c-0e98-4991-8e4a-b0980959c5ee" >
+		<salesforce:basic-connection username="${SALESFORCE.USER}" password="${SALESFORCE.PASSWORD}" securityToken="${SALESFORCE.SECURITY_TOKEN}" />
+	</salesforce:sfdc-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="1673624e-af6c-43a9-8f4e-848ab4cb56ff" file="config/${env}.yaml" />
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="5ed64c13-41a7-4389-a8fe-09c728d5df02" file="config/${env}.yaml" key="${key}" >
+		<secure-properties:encrypt algorithm="Blowfish" />
+	</secure-properties:config>
+	<os:config name="ObjectStore_Config" doc:name="ObjectStore Config" doc:id="84ed7b7d-f7e1-434a-bcc6-428ace75995b" >
+		<os:connection />
+	</os:config>
+	<os:object-store name="Object_store" doc:name="Object store" doc:id="3974d5f9-4157-4394-a570-c002af4e595d" maxEntries="0" entryTtl="2" entryTtlUnit="MINUTES" config-ref="ObjectStore_Config" expirationInterval="3"/>
+</mule>

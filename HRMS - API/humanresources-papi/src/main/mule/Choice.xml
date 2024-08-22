@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os"  
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	<sub-flow name="Forgot_Password_Choice_Sub_Flow" doc:id="8b0eb277-99e0-4086-b6b2-57a4ffdf38c5" >
+		<choice doc:name="Choice" doc:id="f89ac443-f7a1-4cd6-867f-92bbf04e849a">
+				<when expression="#[payload.Password[0] == vars.login_data.Password]">
+				<raise-error doc:name="Raise error" doc:id="001cb7e6-36f0-46f5-af45-5756f06eab0c" description='Password should not be same as your last 1 password(s)' type="ERROR:PASSWORD"/>
+				</when>
+				<when expression="sizeOf(payload) &gt;0">
+					<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;vars.login_data]" doc:name="Set Payload" doc:id="c2ad2dbd-35b8-4fe0-80c9-77c549ffed75" />
+				<set-variable value='#["reset your password"]' doc:name="Set Variable" doc:id="8c9f5828-47a8-4b4c-a5e5-91bc3b291de5" variableName="otpMessage"/>
+				<os:store doc:name="Forgot Password Details Store" doc:id="0312ffe0-2dc9-419a-b86d-da4590b76838" key="#[vars.login_data.Email]" objectStore="Forgot_password" />
+					<flow-ref doc:name="Flow Reference" doc:id="602ed538-d672-45fc-9f55-340a8ca097cf" name="post:\resendOTP:application\json:humanResources-papi-config" />
+				</when>
+			<otherwise>
+				<raise-error doc:name="Raise error" doc:id="f27f1e3f-c902-4db2-b00e-995f89f8d6d0" type="ERROR:NODATAFOUND" description="No data found for the provided email ID in our system. Please check your email ID and try again."/>
+				</otherwise>
+			</choice>
+	</sub-flow>
+	<sub-flow name="SignupOTP_ChoiceSub_Flow" doc:id="5b2360e6-d0c2-48e8-a903-295dc3ee270f" >
+		<choice doc:name="Choice" doc:id="a881eca8-b814-4e59-8b9c-d7f69f75328c" >
+			<when expression="vars.retrieve == vars.input_otp.otp" >
+				<os:retrieve doc:name="Retrieve" doc:id="8fca9359-7ec6-4916-8753-880d6d24f38f" key="#[vars.input_otp.Email]" objectStore="Signup" >
+					<os:default-value ><![CDATA[#[" "]]]></os:default-value>
+				</os:retrieve>
+				<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="Set Payload" doc:id="cb1bd3ae-9610-40eb-a25b-7e6640942258" />
+				<set-variable value='#["POST"]' doc:name="Method Variable" doc:id="056a3e15-1ba3-4cb6-b7ac-f376b501f928" variableName="Method"/>
+				<set-variable value="#[p('HumanResources.signup')]" doc:name="Path Variable" doc:id="37ae41cf-d739-4308-b4c7-2c631d8c3cec" variableName="Path"/>
+				<flow-ref doc:name="Human Resources API" doc:id="d9926665-df94-4bda-b7f0-a295789f0840" name="commonRequest_Sub_Flow" />
+			</when>
+			<otherwise >
+				<raise-error doc:name="Raise error" doc:id="b3385c5a-06d7-4cf5-991d-d4d24ded832f" type="ERROR:OTP" description="Invalid OTP. Please enter the correct OTP to complete the  process." />
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="Signin_Forget_PosswordOTP_ChoiceSub_Flow" doc:id="294bca71-fb9e-4aac-94d2-8fb097743dcf" >
+		<choice doc:name="Choice" doc:id="cff79db5-fec0-468a-9111-f930892b40f3" >
+			<when expression="#[vars.retrieve == vars.input_otp.otp]" >
+				<os:retrieve doc:name="Retrieve" doc:id="e9823fed-a983-4c0a-aac5-fa87742dca92" key="#[vars.input_otp.Email]" objectStore="Forgot_password" >
+					<os:default-value ><![CDATA[#[" "]]]></os:default-value>
+				</os:retrieve>
+				<set-variable value='#["PATCH"]' doc:name="Method Variable" doc:id="8fbeae33-4a7d-4983-b32d-055b229dcf02" variableName="Method"/>
+				<set-variable value="#[p('HumanResources.forgetPossword')]" doc:name="Path Variable" doc:id="c2c46539-cfb0-4214-973e-a0c8f0fa0114" variableName="Path"/>
+				<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="Set Payload" doc:id="9c6446ad-0ed1-41d6-81ee-43ba0c6bc7a1" />
+				<flow-ref doc:name="Human Resources API" doc:id="cb92251b-7566-4929-b122-a9e9dad7d55a" name="commonRequest_Sub_Flow" />
+			</when>
+			<otherwise >
+				<raise-error doc:name="Raise error" doc:id="0793ed87-8384-453b-9400-4e76564d6f41" type="ERROR:OTP" description="Invalid OTP. Please enter the correct OTP to complete the  process." />
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="Signup_Choice_Sub_Flow" doc:id="41b7a18e-1251-4378-9b2e-e2651b553332" >
+		<choice doc:name="Choice" doc:id="4ba3cff4-f04c-48a0-9772-99e28d56450d" >
+			<when expression="#[sizeOf(payload) &gt;0]" >
+				<raise-error doc:name="Raise error" doc:id="31cee681-6bda-4671-abed-5090e36e53a5" type="ERROR:ALREADYEXIST" description="email id already exist" />
+			</when>
+			<when expression="#[sizeOf(vars.GetResponse filter  $.PhoneNumber == vars.signup_payload.PhoneNumber) == 1]">
+				<raise-error doc:name="Raise error" doc:id="f11f66b7-4efb-48b4-af1a-4850eaa0e351" type="ERROR:PHONENUMBER" description="Phone number already exist"/>
+			</when>
+			<when expression="#[sizeOf(vars.GetResponse filter  $.EmployeeID == vars.signup_payload.EmployeeID) == 1]">
+				<raise-error doc:name="Raise error" doc:id="0faa7c22-f45e-487c-b220-e78347fc6de6" type="ERROR:EMPID" description="EmployeeID already exist"/>
+			</when>
+			<otherwise >
+				<set-variable value='#["signup"]' doc:name="OTP Message  Variable" doc:id="137cf228-a9e9-4293-aaab-01814de48ca1" variableName="otpMessage"/>
+				<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;vars.signup_payload]" doc:name="Calling Signup Payload" doc:id="6be0c9bc-7eaa-4cd7-a5db-1a18e8306c2c" />
+				<os:store doc:name="Signup Details Store" doc:id="b12ba351-074b-4e44-a02d-7fe63d77436f" key="#[payload.Email]" objectStore="Signup" />
+				<flow-ref doc:name="Flow Reference" doc:id="0c32f09c-7bcd-471a-804e-024e43d5e94d" name="post:\resendOTP:application\json:humanResources-papi-config" />
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="Signin_Choice_Sub_Flow" doc:id="2cfd9ba6-d9f5-4b8d-be35-4d8bfa598da8" >
+	<choice doc:name="Choice" doc:id="b817e681-2f98-49e8-93e5-495efa7e1fcc" >
+			<when expression="#[isEmpty(payload)]" >
+				<raise-error doc:name="Raise error" doc:id="097c0d74-c3a0-452f-a384-c5ad50ab86e1" type="ERROR:USERNAME" description="User does not exist" />
+			</when>
+			<when expression="#[payload.Password[0] == vars.login_data.Password and payload.Email[0] == vars.login_data.UserName]">
+				<set-payload value='#[%dw 2.0&#10;output application/json&#10;---{&#10;	message :"User has been logged successfully!",&#10;	"EmployeeID": payload[0].EmployeeID&#10;}]' doc:name="Set Payload" doc:id="b6d507fb-752b-4924-947a-f5b829454438" />
+			</when>
+			<otherwise >
+				<raise-error doc:name="Raise error" doc:id="b97ca481-bdd5-4ed4-947f-8b45429bee8a" type="ERROR:USER_PASSWORD" description='"Password is incorrect"' />
+			</otherwise>
+		</choice></sub-flow>
+</mule>

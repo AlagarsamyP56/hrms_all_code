@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/postIdentityInformation",
+  "definitions": {
+    "postIdentityInformation": {
+      "type": "object",
+      "example": {
+        "EmployeeID": "DW001",
+        "Aadhaar": 123456789012,
+        "PassportNumber": "A1234567",
+        "PassportValidUntil": "2024-12-31"
+      },
+      "additionalProperties": true,
+      "required": [
+        "EmployeeID",
+        "PassportNumber",
+        "PassportValidUntil"
+      ],
+      "properties": {
+        "EmployeeID": {
+          "type": "string"
+        },
+        "Aadhaar": {
+          "type": "number"
+        },
+        "PassportNumber": {
+          "type": "string"
+        },
+        "PassportValidUntil": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    }
+  }
+}

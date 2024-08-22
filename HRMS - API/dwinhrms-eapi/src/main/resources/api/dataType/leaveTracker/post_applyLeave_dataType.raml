@@ -1,0 +1,30 @@
+#%RAML 1.0 DataType
+
+type: object
+properties:
+  EmployeeID:
+    type: string
+    description: The ID of the employee applying for leave
+    required: true
+  leaveType:
+    type: string
+    description: The type of leave
+    enum:  [Sick Leave , Personal Leave]
+    required: true
+  leaveDuration:
+    type: string
+    description: The duration of leave
+    enum:  [Full Day , Half Day]
+    required: true
+  fromDate:
+    type: date-only
+    description: The start date of the leave
+    required: true
+  toDate:
+    type: date-only
+    description: The end date of the leave
+    required: true
+  reasonForLeave:
+    type: string
+    description: The reason for the leave
+    required: false

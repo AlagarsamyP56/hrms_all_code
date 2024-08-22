@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/postpersonalDetails",
+  "definitions": {
+    "postpersonalDetails": {
+      "type": "object",
+      "example": {
+        "EmployeeID": "DW001",
+        "MaritalStatus": "Single",
+        "AboutMe": "I am a dedicated and motivated individual with a passion for technology.",
+        "Citizenship": "Indian",
+        "BloodGroup": "O+",
+        "Ask me about/Expertise": "Software development"
+      },
+      "additionalProperties": true,
+      "required": [
+        "EmployeeID"
+      ],
+      "properties": {
+        "EmployeeID": {
+          "type": "string"
+        },
+        "MaritalStatus": {
+          "type": "string"
+        },
+        "AboutMe": {
+          "type": "string"
+        },
+        "Citizenship": {
+          "type": "string"
+        },
+        "BloodGroup": {
+          "type": "string"
+        },
+        "Ask me about/Expertise": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

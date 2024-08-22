@@ -1,0 +1,66 @@
+#%RAML 1.0 Library
+
+traits:
+    errorResponse: !include exchange_modules/ceef0621-18e4-4e4f-a695-76df909c0ffa/errorresponse/1.0.0/errorresponse.raml
+
+    security : !include exchange_modules/ceef0621-18e4-4e4f-a695-76df909c0ffa/security-client_id-enforcement/1.0.0/security-client_id-enforcement.raml
+types:
+### data type for user sigIn/signUp ###
+  otpGeneration : !include dataType/humanResource/OTP_generation_dataType.raml
+
+  otpResend : !include dataType/humanResource/OTP_resend_dataType.raml
+
+  postSignin : !include dataType/humanResource/post_signin_dataType.raml
+
+  postSignup : !include dataType/humanResource/post_signup_dataType.raml
+
+  updateForgotPassword : !include dataType/humanResource/update_forgotPassword_dataType.raml
+
+### data type for attendance tracker ###
+  entry : !include dataType/attendance/entry_dataType.raml
+
+### data type for leave tracker ###
+  post_applyLeave : !include dataType/leaveTracker/post_applyLeave_dataType.raml
+
+  post_holidays : !include dataType/leaveTracker/post_holidays_dataType.raml
+
+  update_totalLeave : !include dataType/leaveTracker/update_totalLeave_dataType.raml
+
+### data type for userInfo post method ###
+  postPayrollInformation : !include dataType/userProfile/payrollInformation/post_payroll_info_dataType.raml
+
+  postIdentityInformation : !include dataType/userProfile/identityInformation/post_identify_info_dataType.raml
+
+  postpersonalDetails : !include dataType/userProfile/personalDetails/post_personal_details_dataType.raml
+
+  postprofessionalReferences : !include dataType/userProfile/professionalReferences/post_professional_references_dataType.raml
+
+  postEmergencyDetails : !include dataType/userProfile/emergencyDetails/post_emergency_dataType.raml
+
+  postHierarchyInformation : !include dataType/userProfile/hierarchyInformation/post_hierarchy_information_dataType.raml
+
+  postWorkInformation : !include dataType/userProfile/workInformation/post_workInfo_dataType.raml
+
+  postSupportingDocuments : !include dataType/userProfile/supportingDocuments/post_supportingDocuments_dataType.raml
+
+  postProfileImage : !include dataType/userProfile/profileImage/post_profileImage_dataType.raml
+
+### data type for userInfo put method ###
+  
+  updatePayrollInformation : !include dataType/userProfile/payrollInformation/update_payroll_info_dataType.raml
+
+  updateIdentityInformation : !include dataType/userProfile/identityInformation/update_identify_info_dataType.raml
+
+  updatepersonalDetails : !include dataType/userProfile/personalDetails/update_personal_details_dataType.raml
+
+  updateprofessionalReferences : !include dataType/userProfile/professionalReferences/update_professional-references_dataType.raml
+
+  updateEmergencyDetails : !include dataType/userProfile/emergencyDetails/update_emergency_dataType.raml
+
+  updateHierarchyInformation : !include dataType/userProfile/hierarchyInformation/update_hierarchy_information_dataType.raml
+
+  updateWorkInformation : !include dataType/userProfile/workInformation/update_workInfo_dataType.raml
+
+  updateSupportingDocuments : !include dataType/userProfile/supportingDocuments/update_supportingDocuments_dataType.raml
+
+  updateProfileImage : !include dataType/userProfile/profileImage/update_profileImage_dataType.raml

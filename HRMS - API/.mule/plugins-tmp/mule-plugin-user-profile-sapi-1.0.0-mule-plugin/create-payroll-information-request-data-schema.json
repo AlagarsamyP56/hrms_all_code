@@ -1,0 +1,131 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/postPayrollInformation",
+  "definitions": {
+    "postPayrollInformation": {
+      "type": "object",
+      "example": {
+        "EmployeeID": "DW001",
+        "FirstName": "john",
+        "LastName": "",
+        "Department": "IT",
+        "Designation": "MuleSoft Developer",
+        "Competency": "",
+        "DateOfBirth": "2002-06-05",
+        "Gender": "Male",
+        "PersonalEmailAddress": "john.doe@gamil.com",
+        "FathersName": "Michael Doe",
+        "Pincode": 123456,
+        "MiddleName": "Robert",
+        "EmailAddress": "john.doe@Dwinsoft.in",
+        "Location": "New York",
+        "DateOfJoining": "2020-01-10",
+        "PAN": "ABCDE1234F",
+        "AddressLine1": "123 Main Street",
+        "AddressLine2": "Apt 101",
+        "City": "New York",
+        "AccountHoldersName": "John Doe",
+        "AccountNumber": "1234567890",
+        "PaymentMode": "Direct Deposit",
+        "IFSCCode": "ABCD0123456",
+        "PersonalMobileNumber": 1234567890
+      },
+      "additionalProperties": true,
+      "required": [
+        "EmployeeID",
+        "FirstName",
+        "LastName",
+        "Gender",
+        "PersonalEmailAddress",
+        "EmailAddress",
+        "PAN",
+        "AddressLine1",
+        "PersonalMobileNumber"
+      ],
+      "properties": {
+        "EmployeeID": {
+          "type": "string"
+        },
+        "FirstName": {
+          "type": "string"
+        },
+        "LastName": {
+          "type": "string"
+        },
+        "Department": {
+          "type": "string"
+        },
+        "Designation": {
+          "type": "string"
+        },
+        "Competency": {
+          "type": "string"
+        },
+        "DateOfBirth": {
+          "type": "string",
+          "format": "date"
+        },
+        "Gender": {
+          "type": "string",
+          "enum": [
+            "Male",
+            "Female",
+            "Other"
+          ]
+        },
+        "PersonalEmailAddress": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+        },
+        "FathersName": {
+          "type": "string"
+        },
+        "Pincode": {
+          "type": "number"
+        },
+        "MiddleName": {
+          "type": "string"
+        },
+        "EmailAddress": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+        },
+        "Location": {
+          "type": "string"
+        },
+        "DateOfJoining": {
+          "type": "string",
+          "format": "date"
+        },
+        "PAN": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9 ]+$"
+        },
+        "AddressLine1": {
+          "type": "string"
+        },
+        "AddressLine2": {
+          "type": "string"
+        },
+        "City": {
+          "type": "string"
+        },
+        "AccountHoldersName": {
+          "type": "string"
+        },
+        "AccountNumber": {
+          "type": "string"
+        },
+        "PaymentMode": {
+          "type": "string"
+        },
+        "IFSCCode": {
+          "type": "string"
+        },
+        "PersonalMobileNumber": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,118 @@
+#%RAML 1.0
+title: leaveTracker-papi
+description:  System API for tracking leaves and holidays
+version: 1.0
+mediaType:  
+- application/json
+protocols: [HTTP , HTTPS]
+
+
+uses:
+  Library: commonLibrary.raml
+
+
+
+
+/Leave:
+    
+  /addLeave:
+    post:
+      is:
+        - Library.common-error
+      body:
+        application/json:
+          type: !include resources/dataTypes/post-applyLeave.raml
+          example: !include resources/examples/post-applyLeave-example.raml
+
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include resources/examples/post-applyLeave-response.raml
+                  
+  /leaveReport:
+    /{EmployeeID}:
+      uriParameters:
+        EmployeeID:
+          description: ID of the employee
+          required: true
+      get:
+        is:
+          - Library.common-error
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include resources/examples/get-leaveReport-example.raml
+                
+  /holidays:
+    description: Holidays list for the employee
+    post:
+      is:
+        - Library.common-error
+      body:
+        application/json:
+          type: !include resources/dataTypes/post-holidays.raml
+          example: !include resources/examples/post-holidays-example.raml
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include resources/examples/post-holidays-response.raml
+                   
+            
+    get:
+      is:
+        - Library.common-error
+      queryParameters:
+        Date:
+          type: string
+          pattern: ^\d{2}-\d{2}-\d{4}$
+          required: false
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include resources/examples/get-holiday-example.raml              
+    
+  /cancelLeave:
+    /{EmployeeID}:
+      uriParameters:
+        EmployeeID:
+          required: true
+      delete:
+        is:
+          - Library.common-error
+        queryParameters:
+          fromDate:
+            required: true
+            description: from date of leave request
+          toDate:
+            required: true
+            description: to date of leave request
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include resources/examples/cancelLeave-response-example.raml
+  /totalLeave:
+    get:
+      is:
+        - Library.common-error
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include resources/examples/totalLeave-getResponse-example.raml
+    put:
+      is:
+        - Library.common-error
+      body:
+        application/json:
+          type: !include resources/dataTypes/put-totalLeave.raml 
+          example: !include resources/examples/totalLeave-put-example.raml
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include resources/examples/totalLeave-putResponse-example.raml

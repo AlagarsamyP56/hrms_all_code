@@ -1,0 +1,107 @@
+#%RAML 1.0
+title: humanResources-papi
+description: 
+  This API provides endpoints for managing user registration within an organization's human resources system.
+version: 1.0
+mediaType:  
+- application/json
+protocols: [HTTP , HTTPS]
+
+uses:
+  commonlib : commonLibrary/library.raml
+
+
+/signin:
+  post:
+    is:
+      - commonlib.errorResponse
+      - commonlib.security
+    body:
+      application/json:
+        type: commonlib.postSignin
+        example: !include example/requestExample/postSignin.raml
+    responses:
+        200:
+          body:
+           application/json:
+             example: !include example/responseExample/postSignin.raml
+            
+  /forgotPassword:  
+    patch:
+      is:
+        - commonlib.errorResponse
+        - commonlib.security
+      body:
+        application/json:
+          type: commonlib.updateForgotPassword
+          example: !include example/requestExample/updateForgotPassword.raml
+      responses:
+        200:
+          body:
+           application/json:
+             example: !include example/responseExample/updateForgotPassword.raml 
+  
+  /forgotPasswordOTP:
+    post:
+      is:
+        - commonlib.errorResponse
+        - commonlib.security
+
+      body:
+       application/json:
+        type: commonlib.otpGenerate
+        example: !include example/requestExample/otpGenerate.raml
+      responses:
+        200:
+          body:
+           application/json:
+             example: !include example/responseExample/otpGenerate.raml
+             
+/signup:
+  post:
+    is:
+      - commonlib.errorResponse
+      - commonlib.security
+    body:
+      application/json:
+        type: commonlib.postSingup
+        example: !include example/requestExample/postSignup.raml
+    responses:
+        200:
+          body:
+           application/json:
+             example: !include example/responseExample/postSignup.raml
+  
+  /signupOTP:
+    post:
+      is:
+        - commonlib.errorResponse
+        - commonlib.security
+     
+      body:
+       application/json:
+        type: commonlib.otpGenerate
+        example: !include example/requestExample/otpGenerate.raml
+      responses:
+        200:
+          body:
+           application/json:
+             example: !include example/responseExample/otpGenerate.raml
+  
+/resendOTP:
+    post:
+      description: This endpoint for regenerating OTP during new User sign-up.
+      is:
+        - commonlib.errorResponse
+        - commonlib.security
+      body:
+       application/json:
+        type: commonlib.otpResend
+        example: !include example/requestExample/OTP_Resend_example.raml
+      responses:
+        200:
+          body:
+           application/json:
+             example: !include example/responseExample/OTP_resend_example.raml
+
+

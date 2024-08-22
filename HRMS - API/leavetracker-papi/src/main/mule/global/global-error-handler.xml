@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule   xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+ ">
+	<sub-flow name="commonError" doc:id="5be76457-5623-4589-b38f-728fe1aa2cba" >
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  errorType: error.errorType.identifier  ,&#10;  timestamp: (now() &gt;&gt; "IST" as String {format: "yyyy-MM-dd HH:mm:ss.SSS"}),&#10;  errorDescription: error.detailedDescription&#10;  &#10;}]' doc:name="Set Payload" doc:id="47991e9f-958a-4161-abaf-30508961481c" />
+		<logger level="INFO" doc:name="Logger" doc:id="c053c8c5-7fe2-438f-ad0e-0e31d2e191aa" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  errorType: error.errorType.identifier  ,&#10;  timestamp: (now() &gt;&gt; "IST" as String {format: "yyyy-MM-dd HH:mm:ss.SSS"}),&#10;  errorDescription: error.detailedDescription&#10;  &#10;}]'/>
+	</sub-flow>
+	
+	<error-handler name="main-errorHandler" doc:id="9a5c8830-f295-4176-890c-dfaaebb910ea" >
+		<on-error-propagate type="APIKIT:BAD_REQUEST">
+			<set-variable value="400" doc:name=" HTTP Status Variable" doc:id="1442492e-7ff8-49b6-bb35-81aca5cf7cbb" variableName="httpStatus"/>
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{message: "Bad request",&#10;statusCode: 400&#10;}]' doc:name="Bad request" doc:id="b91fe44d-bde2-4dae-80ae-7868b29f787d" />
+            
+</on-error-propagate>
+		<on-error-propagate type="APIKIT:NOT_FOUND">
+			<set-variable value="404" doc:name=" HTTP Status Variable" doc:id="03b2ec84-97d2-4f91-82b7-dad6ea99b809" variableName="httpStatus" />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{message: "Resource not found",statusCode: 404}]' doc:name="Resource not found" doc:id="06f68c99-17a0-4f7d-9e97-92ea503893ce" />
+            
+</on-error-propagate>
+		<on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+			<set-variable value="405" doc:name=" HTTP Status Variable" doc:id="184c9e3a-01a9-45ec-9b8e-aff3cdc74d27" variableName="httpStatus" />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{message: "Method not allowed",statusCode: 405}]' doc:name="Method not allowed" doc:id="97e385e2-1155-4944-a748-33cc0e6803ff" />
+            
+</on-error-propagate>
+		<on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+			<set-variable value="406" doc:name=" HTTP Status Variable" doc:id="6b6b2be5-9070-4d71-bac8-58c6b1ba79d1" variableName="httpStatus" />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{message: "Not acceptable",&#10;	statusCode: 406&#10;}]' doc:name="Not acceptable" doc:id="b49fd844-c209-449b-92a0-5342d25ab66a" />
+            
+</on-error-propagate>
+		<on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+			<set-variable value="415" doc:name=" HTTP Status Variable" doc:id="dc452f7d-f4ab-4d9f-aa1d-135cd62e4f5e" variableName="httpStatus" />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{message: "Unsupported media type",statusCode: 415}]' doc:name="Unsupported media type" doc:id="f343a297-5ad0-45a3-a598-295db323fbd9" />
+            
+</on-error-propagate>
+		<on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+			<set-variable value="501" doc:name=" HTTP Status Variable" doc:id="5212d5f6-3221-4e3e-adbd-8607628593fe" variableName="httpStatus" />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{message: "Not Implemented",&#10;	statusCode: 501&#10;}]' doc:name="Not Implemented" doc:id="6349e013-679a-4120-8d91-94a5832826ee" />
+            
+</on-error-propagate>
+	</error-handler>
+	
+	
+	<error-handler name="console-errorHandler" doc:id="3031c004-15ad-4067-bcc6-8a60f17a89c6"><on-error-propagate type="APIKIT:NOT_FOUND">
+			<set-variable value="404" doc:name="Set Variable" doc:id="71c0d037-0b46-4337-922a-972636e9755f" variableName="httpStatus"/>
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{message: "Resource not found"}]' doc:name="Resource not found" doc:id="cc5d0590-03c0-4944-b26b-a49461e7c3f1" />
+            
+</on-error-propagate>
+	
+
+</error-handler>
+	<error-handler name="request-errorHandler" doc:id="a744aa77-022a-4969-b80a-b254653dfbb1" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="c05795e9-4f9c-4eea-aa90-a840db953851" type="HTTP:CONNECTIVITY, HTTP:RETRY_EXHAUSTED">
+			<flow-ref doc:name="commonError" doc:id="adc86d98-c6d2-4648-9824-b37bd5b71d33" name="commonError"/>
+		</on-error-propagate>
+		<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="027735d3-5320-4791-ad9e-078689913b41" type="ANY">
+			<flow-ref doc:name="commonError" doc:id="73c86756-4458-4704-bfba-7e2df5d7043f" name="commonError" />
+		</on-error-continue>
+	</error-handler>
+</mule>

@@ -1,0 +1,12 @@
+#%RAML 1.0 DataType
+type: array
+items:
+  type: object
+  properties:
+    Date:
+      type: string
+      pattern: ^\d{2}-\d{2}-\d{4}$
+      required: true
+    Holiday:
+      type: string
+      required: true

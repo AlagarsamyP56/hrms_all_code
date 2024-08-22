@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule   xmlns:email="http://www.mulesoft.org/schema/mule/email"
+	 
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+ 
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
+  ">
+	<sub-flow name="smtp-implementationSub_Flow" doc:id="70b3e15f-9a7d-477e-9921-42f606ac5ecd" >
+		
+		<set-variable value="#[%dw 2.0&#10;output application/java&#10;---&#10;payload.bodyType]" doc:name="Email Body Type" doc:id="cfe93a02-0790-4822-86b6-6f4343934fa9" variableName="emailBodyType"/>
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload.attachments]" doc:name="Email Attachments Variable" doc:id="ed7fd179-60d5-4ec8-aa7e-cf30f1ed4aae" variableName="emailAttachments"/>
+		<set-variable value="#[%dw 2.0&#10;output application/java&#10;---&#10;payload.subject]" doc:name="Email Subject Variable" doc:id="54ce688e-5cbe-4528-bbae-0dee6e506a85" variableName="emailSubject"/>
+		<set-variable value="#[%dw 2.0&#10;output application/java&#10;---&#10;payload.cc]" doc:name="ccAddress Variable" doc:id="ebc15338-e665-4cc3-b324-de1eeeab1b77" variableName="ccAddress"/>
+		<set-variable value="#[%dw 2.0&#10;output application/java&#10;---&#10;payload.from  default  p('smtp.from')]" doc:name="From Address Variable" doc:id="11d65234-6bc3-4933-b8c7-d099023d50c8" variableName="fromAddress"/>
+		<set-variable value="#[%dw 2.0&#10;output application/java&#10;---&#10;payload.to]" doc:name="To Address Variable" doc:id="bc186a2d-eb8c-4afc-9329-b8836ffeda86" variableName="toAddress"/>
+		<set-variable value="#[%dw 2.0&#10;output application/java&#10;---&#10;payload.body]" doc:name="Email Body Variable" doc:id="316a0e5b-e594-4423-baee-d6997a5e3ccc" variableName="emailBody"/>
+		<until-successful maxRetries="2" doc:name="Until Successful" doc:id="e193592d-8c2e-4f36-90ee-661dbf5ce221" millisBetweenRetries="3000">
+			<try doc:name="Try" doc:id="9cd9eb34-9b3b-4f38-b553-2a917762084d" >
+				<email:send doc:name="smtp-send email" doc:id="3a3b9519-65d5-423c-a1ec-9d2ce042220c" toAddresses="#[vars.toAddress]" config-ref="Email_SMTP" fromAddress="#[vars.fromAddress]" subject="#[vars.emailSubject]" ccAddresses="#[vars.ccAddress]">
+			<email:body contentType="#[vars.emailBodyType]">
+				<email:content><![CDATA[#[vars.emailBody]]]></email:content>
+			</email:body>
+			<email:attachments><![CDATA[#[vars.emailAttachments]]]></email:attachments>
+		</email:send>
+				<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{statusCode: 200,&#10;  status: "Notification sent",&#10;  timestamp: (now() &gt;&gt; "IST" as String {format: "yyyy-MM-dd HH:mm:ss.SSS"})&#10;}]' doc:name="success Response" doc:id="ae4f7f90-0b1d-4198-b56d-e90dc190c1b1" />
+				<error-handler ref="smtp-errorHandler" />
+				
+			</try>
+		</until-successful>
+	</sub-flow>
+</mule>

@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/postProfileImage",
+  "definitions": {
+    "postProfileImage": {
+      "type": "object",
+      "example": {
+        "EmployeeID": "DW001",
+        "image": "base64_encoded_image_data_here"
+      },
+      "additionalProperties": true,
+      "required": [
+        "EmployeeID"
+      ],
+      "properties": {
+        "EmployeeID": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

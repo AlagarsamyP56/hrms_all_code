@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"   xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
+    
+    <flow name="attendance-papi-main">
+        <http:listener config-ref="attendance-papi-httpListenerConfig" path="${http.path}">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="attendance-papi-config" />
+        <error-handler ref="console-errorHandler">
+            
+        </error-handler>
+    </flow>
+    <flow name="attendance-papi-console">
+        <http:listener config-ref="attendance-papi-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="attendance-papi-config" />
+        <error-handler ref="console-errorHandler">
+            
+        </error-handler>
+    </flow>
+    <flow name="get:\attendance\totalHours\(EmployeeID):attendance-papi-config">
+        <logger level="INFO" doc:name="Totalhours flow started" doc:id="09ae217d-4a3a-4dab-9277-7ec2f3677b73" message="Totalhours flow started"/>
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="EmployeeID Variable" doc:id="d4c1e46a-c221-45e4-9c24-1525210bde49" variableName="EmployeeID"/>
+		<set-variable value="#[attributes.queryParams.'Date']" doc:name="Entry Date Variable" doc:id="cf9159f1-cba6-4432-b6d0-bcceb306a42c" variableName="entryDate" />
+		<set-variable value="#[%dw 2.0&#10;output application/java&#10;---&#10;Mule::p('leaveTracker.holidayMethod')]" doc:name="Method Variable" doc:id="c9e9fd48-eb54-40d9-aedd-31bc9223af49" variableName="method"/>
+		<set-variable value="#[%dw 2.0&#10;output application/java&#10;---&#10;Mule::p('leaveTracker.host')]" doc:name="Host Variable" doc:id="5a930692-410e-4af0-87c6-4e2a258a4ae8" variableName="host"/>
+		<set-variable value="#[%dw 2.0&#10;output application/java&#10;---&#10;Mule::p('leaveTracker.holidayPath')]" doc:name="Path Variable" doc:id="df995c15-0d28-4035-be4a-1eca20f4efa4" variableName="path"/>
+		<set-variable value="#[%dw 2.0&#10;output application/java&#10;---&#10;Mule::p('leaveTracker.basePath')]" doc:name="Base Path Variable" doc:id="2f853eb0-f442-4582-8e70-497e053f1c71" variableName="basePath"/>
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;&#10;&#10;((vars.entryDate splitBy  "-")[-1 to 0] joinBy  "-") as Date &lt;= now() as Date]' doc:name="validation of future date" doc:id="fb2f30c0-fe6a-4270-a52b-55f5189b7445" />
+		<choice doc:name="checking status of date" doc:id="55e29ce7-a2d1-4ba9-9a6f-f6404d9930a0" >
+			<when expression="#[payload == false]">
+				<set-payload value='#["No Check-in and Check-out entry found"]' doc:name="response" doc:id="06ca934d-33ac-45ac-b9eb-37e668151309" />
+			</when>
+			<otherwise >
+				<flow-ref doc:name="TotalhoursSub_Flow" doc:id="5a5b0787-5e09-46ab-8874-b66fdad5f888" name="TotalhoursSub_Flow" />
+			</otherwise>
+		</choice>
+    </flow>
+    <flow name="post:\attendance\entry:application\json:attendance-papi-config">
+        <logger level="INFO" doc:name="attendanceEntry Flow started" doc:id="4e595982-0b08-4c92-aea5-658361e0c2b4" message="attendanceEntry Flow started"/>
+		<set-variable value="#[%dw 2.0&#10;output application/java&#10;---&#10;Mule::p('attendSapi.host')]" doc:name="Host Variable" doc:id="f4476a51-0494-4d71-923f-0a6b750a547c" variableName="host"/>
+		<set-variable value="#[%dw 2.0&#10;output application/java&#10;---&#10;Mule::p('attendSapi.basePath')]" doc:name="Base Path Variable" doc:id="4b283d34-a85e-4853-9b26-0fc0cee63ae8" variableName="basePath"/>
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;Mule::p('attendSapi.entryPath')]" doc:name="Path Variable" doc:id="ebc1143b-53eb-4330-b14e-d9df950edd02" variableName="path"/>
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;Mule::p('attendSapi.entryMethod')]" doc:name="Method Variable" doc:id="60736284-ab25-438e-9f1f-74dcdcd9f3d2" variableName="method"/>
+		<flow-ref doc:name="attendanceEntrySub_Flow" doc:id="d8d463cf-efcc-4419-a705-750f415c8931" name="attendanceEntrySub_Flow"/>
+    </flow>
+</mule>

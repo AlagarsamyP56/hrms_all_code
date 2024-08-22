@@ -1,0 +1,66 @@
+#%RAML 1.0 DataType
+type: object
+properties:
+    "EmployeeID": string
+    FirstName: string
+    LastName: string
+    Department: 
+      type: string
+      required: false
+    Designation: 
+      type: string
+      required: false
+    Competency: 
+      type: string
+      required: false
+    DateOfBirth: 
+      type: date-only
+      required: false
+    Gender: 
+     type: string
+     enum: [Male, Female, Other]
+    PersonalEmailAddress: 
+      type: string
+      pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
+
+    FathersName: 
+      type: string
+      required: false
+    Pincode: 
+      type: string
+      required: false
+    MiddleName: 
+      type: string
+      required: false
+    EmailAddress: 
+      type: string
+      pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
+    Location: 
+      type: string
+      required: false
+    DateOfJoining: 
+      type: date-only
+      required: false
+    PAN:
+       type: string
+       pattern: '^[a-zA-Z0-9 ]+$'
+    AddressLine1: string
+    AddressLine2: 
+      type: string
+      required: false
+    City: 
+      type: string
+      required: false
+    AccountHoldersName: 
+      type: string
+      required: false
+    AccountNumber: 
+      type: string
+      required: false
+    PaymentMode: 
+      type: string
+      required: false
+    IFSCCode: 
+      type: string
+      required: false
+    PersonalMobileNumber: string

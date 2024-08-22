@@ -1,0 +1,124 @@
+#%RAML 1.0 Trait
+usage: Apply this Trait to any API to provoide basic http error response
+responses:
+  400:
+    description: Bad Request
+    body:
+      application/json:
+        displayName: Bad Request
+        example:
+          {
+            "error" : "Bad Request",
+            "message" : "Invalid request due to malformed syntax or missing parameters"
+          }
+  401:
+    description: Unauthorized
+    body:
+      application/json:
+        displayName: Unauthorized
+        example:
+          {
+            "error" : "Unauthorized",
+            "message" : "Authentication required or invalid credentials"
+          }
+  403:
+    description: Forbidden
+    body:
+      application/json:
+        displayName: Forbidden
+        example:
+          {
+            "error" : "Forbidden",
+            "message" : "Access denied due to insufficient permissions"
+          }
+  404:
+    description: Not Found
+    body:
+      application/json:
+        displayName: Not Found
+        example:
+          {
+            "error" : "Resource Not Found",
+            "message": "Resource not found or does not exist"
+          }
+  405:
+    description: Method Not Allowed
+    body:
+      application/json:
+        displayName: Method Not Allowed
+        example:
+          {
+            "error" : "Method not allowed/defined",
+            "message": "Request method not allowed for this resource"            
+          }
+  406:
+    description: Not Acceptable
+    body:
+      application/json:
+        displayName: Not Acceptable
+        example:
+          {
+            "error" : "Not Acceptable",
+            "message": "Requested content type is not acceptable"
+          }
+  408:
+    description: Request Timeout
+    body:
+      application/json:
+        displayName: Request Timeout
+        example:
+          {
+            "error" : "Timeout Exceeded",
+            "message": "Request timed out due to server taking too long to respond"
+          }
+  415:
+    description: Unsupported Media Type
+    body:
+      application/json:
+        displayName: Unsupported Media Type
+        example:
+          {
+            "error" : "Unsupported Media Type",
+            "message": "The media type in the request is unsupported"
+          }
+  500:
+    description: Internal Server Error
+    body:
+      application/json:
+        displayName: Internal Server Error
+        example:
+          {
+            "error" : "Internal Server Error",
+            "message": "Internal server error occurred"
+          }
+  501:
+    description: Not Implemented
+    body:
+      application/json:
+        displayName: Not Implemented
+        example:
+          {
+            "error" : "Not Implemented",
+            "message": "The requested feature is not implemented"
+          }
+  503:
+    description: Service Unavailable
+    body:
+      application/json:
+        displayName: Service Unavailable
+        example:
+          {
+            "error" : "Service Unavailable",
+            "message": "The service is temporarily unavailable"
+          }
+  504:
+    description: Gateway Timeout
+    body:
+      application/json:
+        displayName: Gateway Timeout
+        example:
+          {
+            "error" : "Gateway Timeout",
+            "message": "Gateway has timed out while waiting for a response"
+          }
+    

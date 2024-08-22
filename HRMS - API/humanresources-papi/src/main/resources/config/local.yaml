@@ -1,0 +1,12 @@
+http:
+ host: "0.0.0.0"
+ port: "8083"
+ path: "api/*"
+
+userProfile_sapi:
+ protocol: "http"
+ host: "human-resources-sapi.us-e2.cloudhub.io"
+ basePath: "/api/"
+ signup: "signup"
+ forgetPossword: "forgetPossword"
+ 

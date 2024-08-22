@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/updateEmergencyDetails",
+  "definitions": {
+    "updateEmergencyDetails": {
+      "type": "object",
+      "example": {
+        "PhoneNumber": 98765432222
+      },
+      "additionalProperties": true,
+      "properties": {
+        "Name": {
+          "type": "string"
+        },
+        "Relationship": {
+          "type": "string"
+        },
+        "EmailID": {
+          "type": "string"
+        },
+        "PhoneNumber": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}

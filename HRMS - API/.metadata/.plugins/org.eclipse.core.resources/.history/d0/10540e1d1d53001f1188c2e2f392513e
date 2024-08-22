@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os"
+      xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+      xmlns:file="http://www.mulesoft.org/schema/mule/file"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                          http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+                          http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd
+                          http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+                          http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+    
+    <http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config">
+        <http:listener-connection host="0.0.0.0" port="8081"/>
+    </http:listener-config>
+    
+    <sftp:config name="SFTP_Config" doc:name="SFTP Config">
+        <sftp:connection host="gitlab.dwinsoft.in" username="dwinsoft_sftp" password="Good@123K" connectionTimeoutUnit="MINUTES" responseTimeoutUnit="MINUTES" workingDir="/"/>
+    </sftp:config>
+    
+    <file:config name="File_Config" doc:name="File Config">
+        <file:connection workingDir="D:\HRMS"/>
+    </file:config>
+    
+    <os:object-store name="Object_store" doc:name="Object store" doc:id="95740e90-54c7-45e7-96fe-2c8d653b682b" />
+	<flow name="sftp_fileFlow" doc:id="243e69d4-eecd-48a8-a0d6-48f8b7997614">
+        <http:listener doc:name="Listener" config-ref="HTTP_Listener_config" path="/file"/>
+        
+        <!-- Log incoming payload to inspect structure -->
+        <logger level="INFO" doc:name="Log Payload" message="#[payload]"/>
+
+        <!-- Parse and handle the multipart form data -->
+		<set-variable value='#[%dw 2.0&#10;import * from dw::core::Binaries&#10;&#10;output application/json&#10;&#10;---&#10;&#10;(payload.parts - "EmployeeID") mapObject ((value, key, index) -&gt; &#10;    {&#10;        (key): toBase64((value.content) as Binary)&#10;    }&#10;)]' doc:name="Set Variable" doc:id="baf20287-b737-44ae-9a19-187c49be1625" variableName="payload"/>
+		<ee:transform doc:name="Transform Message" doc:id="5c456541-94f6-48a0-8887-6a16636cad25">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable variableName="filePath" doc:name="Set File Path" value="#['/training/HRMS/' ++ &#10;            (payload.parts.EmployeeID.content as String)]"/>
+
+        <!-- Log the file path to verify correctness -->
+
+        <sftp:create-directory doc:name="Create directory" doc:id="ec1c6b58-048b-4922-a2c7-be96b03f6cf3" config-ref="SFTP_Config" directoryPath="#[vars.filePath]"/>
+        
+        <!-- Additional operations, such as file writing or processing -->
+		<set-payload value="#[vars.payload]" doc:name="Set Payload" doc:id="c760958c-6c7b-4566-baed-5fd03717a5fe" />
+		<foreach doc:name="For Each" doc:id="0c32e359-6016-4ec1-a3d6-6a3093c29244" collection="#[payload]">
+			<set-variable value="#[vars.filePath ++ '\/' ++ keysOf(payload)[0] ++ '.pdf']" doc:name="Set Variable" doc:id="fcfc792f-efd3-46d7-b081-5bb22ec371e1" variableName="fileName"/>
+			<set-payload value='#[%dw 2.0&#10;import * from dw::core::Binaries&#10;output multipart/form-data&#10;---&#10;{&#10;    parts:{&#10;        base64Content:{&#10;            headers:{&#10;                "Content-Type":"application/pdf"&#10;            },&#10;            content:fromBase64 (valuesOf(payload)[0])&#10;            },&#10;        }&#10;}]' doc:name="Set Payload" doc:id="ef8f73ee-8352-4688-8168-d83523d3a524" mimeType="application/pdf" />
+			<sftp:write doc:name="Write" doc:id="5ef78fd6-7f8a-42c9-b161-b584b1b6f0c8" config-ref="SFTP_Config" path="#[vars.fileName]"/>
+		</foreach>
+    
+</flow>
+	<flow name="sftp_fileFlow1" doc:id="6d04159e-9a13-4ae6-888a-49937d1d4def" >
+		<http:listener doc:name="Listener" doc:id="c3d9b7a2-0a0f-426f-a951-f08222da9d2d" config-ref="HTTP_Listener_config" path="/api"/>
+		<sftp:list doc:name="List" doc:id="43900965-1441-4148-86da-dcb86c2890b8" config-ref="SFTP_Config" directoryPath="/training/HRMS/DW002"/>
+		<set-payload value="#[%dw 2.0&#10;output application/json&#10;&#10;---&#10; payload]" doc:name="Set Payload" doc:id="25d29ad3-c7b8-45a8-b405-d2cad38ddeb3" />
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;&#10;---&#10; &#10;&#10;payload map ((item, index) -&gt; {&#10;    path: item.payload,&#10;    name: item.attributes.name&#10;})]" doc:name="Set Variable" doc:id="0b26ee29-b29f-40ab-83c1-36349f70467f" variableName="readPayload"/>
+		<!-- [STUDIO:"Read"]<sftp:read doc:name="Read" doc:id="aadd1f31-ee22-42b3-9823-417b0fb8a991" config-ref="SFTP_Config" path="/training/HRMS/DW002"/> [STUDIO] -->
+		<!-- [STUDIO:"Read"]<sftp:read doc:name="Read" doc:id="02cd9d37-385e-4d37-a59c-822cc6ec28f6" config-ref="SFTP_Config" path="/training/HRMS/DW002/Resume.pdf"/> [STUDIO] -->
+		<!-- [STUDIO:"Set Payload"]<set-payload value="#[payload[0&#93;&#93;" doc:name="Set Payload" doc:id="88ff39d6-8140-464d-87da-4b62562f3475" /> [STUDIO] -->
+		<foreach doc:name="For Each" doc:id="465b3f73-9f15-4d16-9a76-1965620ea2e5" collection="#[payload]">
+			<sftp:read doc:name="Read" doc:id="cedcafc3-ba6b-4007-a294-0067928b89da" config-ref="SFTP_Config" path="#[payload.path]" />
+			<logger level="INFO" doc:name="Logger" doc:id="dba3df21-8bcc-48f5-a19c-212525c59d2c" message="#[payload]" />
+			<os:store doc:name="Store" doc:id="07e82f46-93c9-457e-8392-44f34a7fe71a" key="#[vars.readPayload.name]" objectStore="Object_store"/>
+		</foreach>
+		<os:retrieve-all doc:name="Retrieve all" doc:id="059b7b89-a81c-4922-a94a-18ddd2988b68" objectStore="Object_store"/>
+	</flow>
+
+</mule>

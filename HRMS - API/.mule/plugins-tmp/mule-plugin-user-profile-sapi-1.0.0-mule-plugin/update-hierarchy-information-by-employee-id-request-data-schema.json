@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/updateHierarchyInformation",
+  "definitions": {
+    "updateHierarchyInformation": {
+      "type": "object",
+      "example": {
+        "ReportingManager": "peter A"
+      },
+      "additionalProperties": true,
+      "properties": {
+        "ReportingManager": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

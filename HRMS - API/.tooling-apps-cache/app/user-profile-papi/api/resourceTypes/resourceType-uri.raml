@@ -1,0 +1,48 @@
+#%RAML 1.0 ResourceType
+
+
+uriParameters:
+  "EmployeeID":
+    type: string
+    required: true
+    example:
+      "EMP001"
+get:
+      description: This API is used to retrieve all details about <<resourcePathName>>
+      responses: 
+        200:
+          body: 
+            application/json:
+              example: <<GetResponseExample>>
+delete:
+      description: This API is used to Delete all details about <<resourcePathName>>
+      responses: 
+        200:
+          body: 
+            application/json:
+              example: {
+   "status": "OK",
+   "message": "User Delete successfully"
+  
+}
+patch:
+ 
+      description: "Update Employee specified by ID <<resourcePathName>>"
+      body:
+        application/json:  
+          type: <<UpdateType>>
+          example: <<UpdateRequestExample>>
+            
+          
+      responses:
+        200:
+          body:
+            application/json:
+              
+              example: {
+   "status": "OK",
+   "message": "User update successfully",
+  
+}
+  
+      

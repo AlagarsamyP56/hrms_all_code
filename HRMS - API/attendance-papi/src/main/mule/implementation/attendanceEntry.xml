@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"  
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<sub-flow name="attendanceEntrySub_Flow" doc:id="5a84db08-8a40-4a36-8627-fe4f8e47a87c" >
+		<until-successful maxRetries="${until.retries}" doc:name="Until Successful" doc:id="b5249097-deec-4cc0-8ba8-510237c10748" millisBetweenRetries="${until.millisecs}">
+			<try doc:name="Try" doc:id="4ae41168-7db6-4554-bc31-25486194ac08">
+				<logger level="INFO" doc:name="Before posting entry into attendance-sapi" doc:id="6b7d4c20-c87a-4e29-a307-4fa6aa571449" message="Before posting entry into attendance-sapi" />
+				<http:request doc:name="attendSapi" doc:id="6c881a94-56ca-47de-b550-2df2fcf3d51c" config-ref="HTTP_Request_SAPI" method="#[vars.method]" path="#[vars.path]"/>
+				<logger level="INFO" doc:name="After posting entry into attendance-sapi" doc:id="967e1ce0-22e0-4a4b-a681-fa8aa969dd9f" message="After posting entry into attendance-sapi"/>
+				<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  message: "Entries recorded successfully",&#10;  entryTime: ((((now() &gt;&gt; "IST" as String  ) splitBy "T") joinBy " ") [0 to 18])[11 to 15]&#10;}]' doc:name="Set Payload" doc:id="cd331610-2467-471d-8097-a795c9878a7e" />
+				<error-handler ref="request-errorHandler" />		
+		</try>
+		</until-successful>
+	</sub-flow>
+</mule>

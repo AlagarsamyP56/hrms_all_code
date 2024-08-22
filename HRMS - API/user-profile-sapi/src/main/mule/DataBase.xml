@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule  xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+">
+	<sub-flow name="database_subFlow" doc:id="44cf6560-0907-4186-9742-9c630ca0399c" >
+		<logger level="INFO" doc:name="Before DB Call Logger" doc:id="8bd297a5-6a73-4bc4-a942-7df00bb1150a" message='Before DB Call   #[now() as String {format:"yyyy.MM.dd HH:mm:ss.SSS" }]' />
+		<db:select doc:name="Select database" doc:id="f77164bf-a8ab-46d6-acbe-e9c6644e92ec" config-ref="Database_Config" >
+			<db:sql ><![CDATA[#[payload]
+]]></db:sql>
+		</db:select>
+		<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="Set Payload" doc:id="bfc85268-b43a-4f89-9a64-5e082657048c" />
+		<logger level="INFO" doc:name="After DB Call Logger" doc:id="8d7e907f-be7d-4e8d-b227-c15338a1263f" message='After DB Call   #[now() as String {format:"yyyy.MM.dd HH:mm:ss.SSS" }]' />
+	</sub-flow>
+	<sub-flow name="insert_database_subFlow" doc:id="f6bd746c-0b41-41fc-8314-b2467183611e" >
+		<logger level="INFO" doc:name="Before DB Call Logger" doc:id="4dcb87fc-b52b-4cd6-a3fd-f4a5b6094e75" message='Before DB Call   #[now() as String {format:"yyyy.MM.dd HH:mm:ss.SSS" }]' />
+		<db:insert doc:name="Insert database" doc:id="3e430641-816c-40bb-93c8-f2b903bc9ec1" config-ref="Database_Config">
+			<db:sql ><![CDATA[#[payload]]]></db:sql>
+			<db:input-parameters ><![CDATA[#[vars.Insert]]]></db:input-parameters>
+		</db:insert>
+		<logger level="INFO" doc:name="After DB Call Logger" doc:id="58b00074-2d68-422d-89c9-34dafd584a5f" message='After DB Call   #[now() as String {format:"yyyy.MM.dd HH:mm:ss.SSS" }]' />
+	</sub-flow>
+	<sub-flow name="delete_database_subFlow" doc:id="09e31366-e429-425a-8179-675f9bbb826c">
+		<logger level="INFO" doc:name="Before DB Call Logger" doc:id="e6f7fe0e-3d41-4d8b-a443-c0501009f443" message='Before DB Call   #[now() as String {format:"yyyy.MM.dd HH:mm:ss.SSS" }]' />
+		<db:delete doc:name="Delete database" doc:id="2db97f36-8472-46e8-9902-cda7d53d37c7" config-ref="Database_Config">
+			<db:sql><![CDATA[#[payload]]]></db:sql>
+			<db:input-parameters ></db:input-parameters>
+		</db:delete>
+		<logger level="INFO" doc:name="After DB Call Logger" doc:id="b82b3e07-5242-4132-89de-48b3cfb0acf1" message='After DB Call   #[now() as String {format:"yyyy.MM.dd HH:mm:ss.SSS" }]' />
+	</sub-flow>
+	<sub-flow name="update_database_subFlow" doc:id="3454ab68-fb08-45d8-96b3-14c6bc7b285f" >
+		<logger level="INFO" doc:name="Before DB Call Logger" doc:id="75c214be-f312-4720-ac0d-1d0cbd7d5baf" message='Before DB Call   #[now() as String {format:"yyyy.MM.dd HH:mm:ss.SSS" }]' />
+		<db:update doc:name="Update database" doc:id="f1df6e06-6aca-41b7-b8a3-f61df61f6648" config-ref="Database_Config">
+			<db:sql ><![CDATA[#[payload]]]></db:sql>
+		</db:update>
+		<logger level="INFO" doc:name="After DB Call Logger" doc:id="3d57ad86-47de-414b-9f3a-4d82a929cd72" message='After DB Call   #[now() as String {format:"yyyy.MM.dd HH:mm:ss.SSS" }]' />
+	</sub-flow>
+</mule>

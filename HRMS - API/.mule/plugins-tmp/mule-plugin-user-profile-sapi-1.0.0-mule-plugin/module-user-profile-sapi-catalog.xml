@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalogs xmlns="http://www.mulesoft.org/schema/mule/types" >
+
+
+
+    <catalog name="create-payroll-information-request-type" format="application/json">
+        <schema format="application/json+schema" location="./create-payroll-information-request-data-schema.json" />
+    </catalog>
+
+
+
+
+
+
+    <catalog name="update-payroll-information-by-employee-id-request-type" format="application/json">
+        <schema format="application/json+schema" location="./update-payroll-information-by-employee-id-request-data-schema.json" />
+    </catalog>
+
+
+
+
+    <catalog name="create-identity-information-request-type" format="application/json">
+        <schema format="application/json+schema" location="./create-identity-information-request-data-schema.json" />
+    </catalog>
+
+
+
+
+
+
+    <catalog name="update-identity-information-by-employee-id-request-type" format="application/json">
+        <schema format="application/json+schema" location="./update-identity-information-by-employee-id-request-data-schema.json" />
+    </catalog>
+
+
+
+
+    <catalog name="create-personal-detail-request-type" format="application/json">
+        <schema format="application/json+schema" location="./create-personal-detail-request-data-schema.json" />
+    </catalog>
+
+
+
+
+
+
+    <catalog name="update-personal-detail-by-employee-id-request-type" format="application/json">
+        <schema format="application/json+schema" location="./update-personal-detail-by-employee-id-request-data-schema.json" />
+    </catalog>
+
+
+
+
+    <catalog name="create-professional-reference-request-type" format="application/json">
+        <schema format="application/json+schema" location="./create-professional-reference-request-data-schema.json" />
+    </catalog>
+
+
+
+
+
+
+    <catalog name="update-professional-reference-by-employee-id-request-type" format="application/json">
+        <schema format="application/json+schema" location="./update-professional-reference-by-employee-id-request-data-schema.json" />
+    </catalog>
+
+
+
+
+    <catalog name="create-emergency-detail-request-type" format="application/json">
+        <schema format="application/json+schema" location="./create-emergency-detail-request-data-schema.json" />
+    </catalog>
+
+
+
+
+
+
+    <catalog name="update-emergency-detail-by-employee-id-request-type" format="application/json">
+        <schema format="application/json+schema" location="./update-emergency-detail-by-employee-id-request-data-schema.json" />
+    </catalog>
+
+
+
+
+    <catalog name="create-hierarchy-information-request-type" format="application/json">
+        <schema format="application/json+schema" location="./create-hierarchy-information-request-data-schema.json" />
+    </catalog>
+
+
+
+
+
+
+    <catalog name="update-hierarchy-information-by-employee-id-request-type" format="application/json">
+        <schema format="application/json+schema" location="./update-hierarchy-information-by-employee-id-request-data-schema.json" />
+    </catalog>
+
+
+
+
+    <catalog name="create-work-information-request-type" format="application/json">
+        <schema format="application/json+schema" location="./create-work-information-request-data-schema.json" />
+    </catalog>
+
+
+
+
+
+
+    <catalog name="update-work-information-by-employee-id-request-type" format="application/json">
+        <schema format="application/json+schema" location="./update-work-information-by-employee-id-request-data-schema.json" />
+    </catalog>
+
+
+
+
+    <catalog name="create-supporting-document-request-type" format="application/json">
+        <schema format="application/json+schema" location="./create-supporting-document-request-data-schema.json" />
+    </catalog>
+
+
+
+
+
+
+    <catalog name="update-supporting-document-by-employee-id-request-type" format="application/json">
+        <schema format="application/json+schema" location="./update-supporting-document-by-employee-id-request-data-schema.json" />
+    </catalog>
+
+
+
+
+    <catalog name="create-profile-image-request-type" format="application/json">
+        <schema format="application/json+schema" location="./create-profile-image-request-data-schema.json" />
+    </catalog>
+
+
+
+
+
+
+    <catalog name="update-profile-image-by-employee-id-request-type" format="application/json">
+        <schema format="application/json+schema" location="./update-profile-image-by-employee-id-request-data-schema.json" />
+    </catalog>
+
+
+
+
+    <catalog name="request-streaming-mode-enum" format="application/json">
+        <schema format="application/json+schema" location="./request-streaming-mode-enum.json" />
+    </catalog>
+
+    <catalog name="java" format="application/java">
+            <schema format="application/classloader"/>
+    </catalog>
+
+</catalogs>

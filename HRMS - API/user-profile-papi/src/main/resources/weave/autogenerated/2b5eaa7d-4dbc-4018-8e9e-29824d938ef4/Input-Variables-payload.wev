@@ -1,0 +1,29 @@
+%dw 2.0
+
+type auto_2b5eaa7d_4dbc_4018_8e9e_29824d938ef4_Input_Variables_payload = {
+  DateOfBirth?: String, 
+  Designation?: String, 
+  AccountHoldersName?: String, 
+  FirstName?: String, 
+  PersonalEmailAddress?: String, 
+  IFSCCode?: String, 
+  PersonalMobileNumber?: Number, 
+  Gender?: "Male" | "Female" | "Other", 
+  City?: String, 
+  MiddleName?: String, 
+  EmailAddress?: String, 
+  AccountNumber?: String, 
+  AddressLine2?: String, 
+  Department?: String, 
+  FathersName?: String, 
+  AddressLine1?: String, 
+  DateOfJoining?: String, 
+  Competency?: String, 
+  LastName?: String, 
+  PAN?: String, 
+  Pincode?: Number, 
+  Location?: String, 
+  PaymentMode?: String, 
+  _?: Any
+}
+

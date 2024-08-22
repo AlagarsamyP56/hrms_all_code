@@ -1,0 +1,847 @@
+#%RAML 1.0
+title: hrms-eapi
+description: The HRMS API is a tool for businesses to handle all aspects of managing their employees, like keeping track of their information, monitoring attendance, managing leave requests, and more.
+version: 1.0
+mediaType: 
+- application/json
+protocols:
+  - HTTP
+  - HTTPS
+uses:
+  commonlib : commonLibrary.raml
+
+### This below Endpoints for user authentication, password recovery, signup, and OTP generation in the human resources system. ###
+/signin:
+  post:
+    is:
+      - commonlib.errorResponse
+      - commonlib.security
+    description: This endpoint is used to sign-in the  user.
+    body:
+      application/json:
+        type: commonlib.postSignin
+        example: !include examples/requestExample/humanResource/post_signin_example.raml
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/responseExample/humanResource/post_sigin_example.raml
+
+  /forgotPassword:
+    patch:
+      is:
+        - commonlib.errorResponse
+        - commonlib.security
+      description: This endpoint is used for updating passwords if user forgot their password.
+      
+      body:
+        application/json:
+          type: commonlib.updateForgotPassword
+          example: !include examples/requestExample/humanResource/update_forgot_password_example.raml
+      responses:
+        200:
+          body:
+           application/json:
+             example: !include examples/responseExample/humanResource/update_forgotPassword_example.raml
+  
+    /OTP:
+      post:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security
+        description: This endpoint for generating OTP during  user sign-in.
+        body:
+          application/json:
+            type: commonlib.otpGeneration
+            example: !include examples/requestExample/humanResource/otp_generation_example.raml
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include examples/responseExample/humanResource/otp_generation_example.raml
+
+/signup:
+  post:
+    is:
+      - commonlib.errorResponse
+      - commonlib.security
+    description: This endpoint facilitates the sign-up process for new users.
+    body:
+      application/json:
+        type: commonlib.postSignup
+        example: !include examples/requestExample/humanResource/post_signup_example.raml
+    responses:
+        200:
+          body:
+           application/json:
+             example: !include examples/responseExample/humanResource/post_sigup_example.raml
+  
+  /OTP:
+    post:
+      is:
+        - commonlib.errorResponse
+        - commonlib.security
+      description: This endpoint for generating OTP during new user sign-up.
+      body:
+       application/json:
+        type: commonlib.otpGeneration
+        example: !include examples/requestExample/humanResource/otp_generation_example.raml
+      responses:
+        200:
+          body:
+           application/json:
+             example: !include examples/responseExample/humanResource/otp_generation_example.raml
+  
+/resendOTP:
+    post:
+      is:
+        - commonlib.errorResponse
+        - commonlib.security
+      description: This endpoint for regenerating OTP during new user sign-up.
+      body:
+       application/json:
+        type: commonlib.otpResend
+        example: !include examples/requestExample/humanResource/otp_resend_example.raml
+      responses:
+        200:
+          body:
+           application/json:
+             example: !include examples/responseExample/humanResource/resend_OTP_example.raml
+
+### Following below endpoints for recording employee attendance entries and retrieving total worked hours by employee. ###
+/attendance:
+  /entry:
+    description: Record employee attendance with check-in and check-out entries.
+    post:
+      is:
+        - commonlib.errorResponse
+        - commonlib.security 
+      body:
+        application/json:
+          type: commonlib.entry
+          example: !include examples/requestExample/attendance/entry_example.raml
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include examples/responseExample/attendance/entry_example.raml
+  /totalHours:
+    /{EmployeeID}:
+      uriParameters:
+        EmployeeID:
+          description: The ID of the employee whose total hours are being retrieved.
+          type: string
+          required: true
+      get:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: Retrieve the total hours worked by an employee on a particular date.
+        queryParameters:
+          Date:
+            type: string
+            pattern: ^\d{2}-\d{2}-\d{4}$
+            required: true
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include examples/responseExample/attendance/totalHours_example.raml
+
+### Following below endpoints for leave management, including applying for leave, accessing leave reports, managing holidays, canceling leave requests, and updating total leave balance.###
+/Leave:
+  /applyLeave:
+    post:
+      is:
+        - commonlib.errorResponse
+        - commonlib.security 
+      description: This endpoint is used to apply leave by employee.
+      body:
+        application/json:
+          type: commonlib.post_applyLeave
+          example: !include examples/requestExample/leaveTracker/post_applyLeave_example.raml
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include examples/responseExample/leaveTracker/post_applyLeave_example.raml
+  /leaveReport:
+    /{EmployeeID}:
+      uriParameters:
+        EmployeeID:
+          description: ID of the employee
+          required: true
+      get:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: Retrieve leave report for a specific employee.
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include examples/responseExample/leaveTracker/get_leaveReport_example.raml        
+  /holidays:
+    description: This endpoint is used to manage holidays list for employees.
+    post:
+      is:
+        - commonlib.errorResponse
+        - commonlib.security 
+      body:
+        application/json:
+          type: !include dataType/leaveTracker/post_holidays_dataType.raml
+          example: !include examples/requestExample/leaveTracker/post_holidays_example.raml
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include examples/responseExample/leaveTracker/post_holidays_example.raml
+    get:
+      is:
+        - commonlib.errorResponse
+        - commonlib.security 
+      queryParameters:
+        Date:
+          type: string
+          pattern: ^\d{2}-\d{2}-\d{4}$
+          required: false
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include examples/responseExample/leaveTracker/get_holiday_example.raml
+  /cancelLeave:
+    description: Cancel leave request for a specific employee by ID.
+    /{EmployeeID}:
+      uriParameters:
+        EmployeeID:
+          required: true
+      delete:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        queryParameters:
+          fromDate:
+            required: true
+            description: The start date for the leave period.
+          toDate:
+            required : true
+            description: The end date for the leave period.
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include examples/responseExample/leaveTracker/cancel_leave_example.raml
+  /totalLeave:
+    description: This endpoint retrieve and update total leave balance.
+    get:
+      is:
+        - commonlib.errorResponse
+        - commonlib.security 
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include examples/responseExample/leaveTracker/get_totalLeave_example.raml
+    put:
+      is:
+        - commonlib.errorResponse
+        - commonlib.security 
+      body:
+        application/json:
+          type: !include dataType/leaveTracker/update_totalLeave_dataType.raml 
+          example: !include examples/requestExample/leaveTracker/update_totalLeave_example.raml
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include examples/responseExample/leaveTracker/update_totalLeave_example.raml 
+
+### Following below endpoints for managing user profile information details. ###
+/user-profile:
+  /payrollInformation:
+    get:
+      is:
+        - commonlib.errorResponse
+        - commonlib.security 
+      description: This endpoint is used to retrieve all details about user payroll Information.
+      responses: 
+        200:
+          body: 
+            application/json:
+              example: !include examples/responseExample/userProfile/get_PayrollInformation_example.raml
+    post:
+      is:
+        - commonlib.errorResponse
+        - commonlib.security 
+      description: This endpoint is used to create new  user payroll Information.
+      body:  
+        application/json:
+          type: commonlib.postPayrollInformation
+          example: !include examples/requestExample/userProfile/payrollInformation/post_payrollInfo_example.raml
+      responses: 
+        201:
+          body: 
+            application/json:
+              example: !include examples/responseExample/userProfile/post_example.raml
+    /{EmployeeID}:
+      uriParameters:
+          "EmployeeID":
+            type: string
+            required: true
+            example: "EMP001"
+      get:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint retrieves all details of user payroll information based on the employee ID.
+        responses: 
+          200:
+            body: 
+              application/json:
+                example: !include examples/responseExample/userProfile/get_PayrollInformation_example.raml 
+      delete:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint deletes user payroll details based on the employee ID. 
+        responses: 
+          200:
+            body: 
+              application/json:
+                example: !include examples/responseExample/userProfile/delete_example.raml
+      patch:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint allows updating payroll details based on the employee ID.
+        body:
+          application/json:  
+            type: commonlib.updatePayrollInformation
+            example: !include examples/requestExample/userProfile/payrollInformation/update_payrollInfo_example.raml
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include examples/responseExample/userProfile/update_example.raml
+  /identityInformation:
+    get:
+      is:
+          - commonlib.errorResponse
+          - commonlib.security 
+      description: This endpoint is used to retrieve all details about user identity Information.
+      responses: 
+        200:
+          body: 
+            application/json:
+              example: !include examples/responseExample/userProfile/getIdentityInformation_example.raml
+    post:
+      is:
+          - commonlib.errorResponse
+          - commonlib.security 
+      description: This endpoint is used to create new  user identity Information.
+      body:  
+        application/json:
+          type: commonlib.postIdentityInformation
+          example: !include examples/requestExample/userProfile/identityInformation/post_identityInfo_example.raml
+      responses: 
+        201:
+          body: 
+            application/json:
+              example: !include examples/responseExample/userProfile/post_example.raml
+    /{EmployeeID}:
+      uriParameters:
+          "EmployeeID":
+            type: string
+            required: true
+            example: "EMP001"
+      get:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint retrieve details of user identity information based on the employee ID.
+        responses: 
+          200:
+            body: 
+              application/json:
+                example: !include examples/responseExample/userProfile/getIdentityInformation_example.raml 
+      delete:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint deletes user identity details based on the employee ID. 
+        responses: 
+          200:
+            body: 
+              application/json:
+                example: !include examples/responseExample/userProfile/delete_example.raml
+      patch:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint allows updating identity details based on the employee ID.
+        body:
+          application/json:  
+            type: commonlib.updateIdentityInformation
+            example: !include examples/requestExample/userProfile/identityInformation/update_identityInfo_example.raml
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include examples/responseExample/userProfile/update_example.raml
+  /personalDetails:
+    get:
+      is:
+          - commonlib.errorResponse
+          - commonlib.security 
+      description: This endpoint is used to retrieve all details about user personal Information.
+      responses: 
+        200:
+          body: 
+            application/json:
+              example: !include examples/responseExample/userProfile/get_personalDetails_example.raml
+    post:
+      is:
+          - commonlib.errorResponse
+          - commonlib.security 
+      description: This endpoint is used to create new  user personal Information.
+      body:  
+        application/json:
+          type: commonlib.postpersonalDetails
+          example: !include examples/requestExample/userProfile/personalDetails/post_personalDetails_example.raml
+      responses: 
+        201:
+          body: 
+            application/json:
+              example: !include examples/responseExample/userProfile/post_example.raml
+    /{EmployeeID}:
+      uriParameters:
+          "EmployeeID":
+            type: string
+            required: true
+            example: "EMP001"
+      get:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint retrieve details of user's personal information based on the employee ID.
+        responses: 
+          200:
+            body: 
+              application/json:
+                example: !include examples/responseExample/userProfile/get_personalDetails_example.raml
+      delete:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint deletes user's personal details based on the employee ID. 
+        responses: 
+          200:
+            body: 
+              application/json:
+                example: !include examples/responseExample/userProfile/delete_example.raml
+      patch:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint allows updating user's personal details based on the employee ID.
+        body:
+          application/json:  
+            type: commonlib.updatepersonalDetails
+            example: !include examples/requestExample/userProfile/personalDetails/update_personalDetails_example.raml
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include examples/responseExample/userProfile/update_example.raml
+  /professionalReferences:
+    get:
+      is:
+          - commonlib.errorResponse
+          - commonlib.security 
+      description: This endpoint is used to retrieve all details about professional references Information.
+      responses: 
+        200:
+          body: 
+            application/json:
+              example: !include examples/responseExample/userProfile/get_professionalReferences_example.raml
+    post:
+      is:
+        - commonlib.errorResponse
+        - commonlib.security 
+      description: This endpoint is used to create new user's professional reference Information.
+      body:  
+        application/json:
+          type: commonlib.postprofessionalReferences
+          example: !include examples/requestExample/userProfile/professionalReferences/post_professionalReferences_example.raml
+      responses: 
+        201:
+          body: 
+            application/json:
+              example: !include examples/responseExample/userProfile/post_example.raml
+    /{EmployeeID}:
+      uriParameters:
+          "EmployeeID":
+            type: string
+            required: true
+            example: "EMP001"
+      get:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint retrieve details of user's professional references information based on the employee ID.
+        responses: 
+          200:
+            body: 
+              application/json:
+                example: !include examples/responseExample/userProfile/get_professionalReferences_example.raml
+      delete:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint deletes user's professional reference details based on the employee ID. 
+        responses: 
+          200:
+            body: 
+              application/json:
+                example: !include examples/responseExample/userProfile/delete_example.raml
+      patch:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint allows updating user's professional reference details based on the employee ID.
+        body:
+          application/json:  
+            type: commonlib.updateprofessionalReferences
+            example: !include examples/requestExample/userProfile/professionalReferences/update_professionalReferences_example.raml
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include examples/responseExample/userProfile/update_example.raml
+  /emergencyDetails:
+    get:
+      is:
+        - commonlib.errorResponse
+        - commonlib.security 
+      description: This endpoint retrieves all emergency contact details.
+      responses: 
+        200:
+          body: 
+            application/json:
+              example: !include examples/responseExample/userProfile/getEmergencyDetails_example.raml
+    post:
+      is:
+        - commonlib.errorResponse
+        - commonlib.security 
+      description: This endpoint is utilized for creating emergency details information for users.
+      body:  
+        application/json:
+          type: commonlib.postEmergencyDetails
+          example: !include examples/requestExample/userProfile/emergencyDetails/post_emergencyDetails_example.raml
+      responses: 
+        201:
+          body: 
+            application/json:
+              example: !include examples/responseExample/userProfile/post_example.raml
+    /{EmployeeID}:
+      uriParameters:
+          "EmployeeID":
+            type: string
+            required: true
+            example: "EMP001"
+      get:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint is used to retrieve user's emergency contact information based on employee ID.
+        responses: 
+          200:
+            body: 
+              application/json:
+                example: !include examples/responseExample/userProfile/getEmergencyDetails_example.raml
+      delete:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint deletes a user's emergency details based on the employee ID.
+        responses: 
+          200:
+            body: 
+              application/json:
+                example: !include examples/responseExample/userProfile/delete_example.raml
+      patch:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint enables updating user's emergency details using the employee ID.
+        body:
+          application/json:  
+            type: commonlib.updateEmergencyDetails
+            example: !include examples/requestExample/userProfile/emergencyDetails/update_emergencyDetails_example.raml
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include examples/responseExample/userProfile/update_example.raml
+  /hierarchyInformation:
+    get:
+      is:
+          - commonlib.errorResponse
+          - commonlib.security 
+      description: This endpoint retrieves all hierarchy information details.
+      responses: 
+        200:
+          body: 
+            application/json:
+              example: !include examples/responseExample/userProfile/getHierarchyInformation_example.raml
+    post:
+      is:
+          - commonlib.errorResponse
+          - commonlib.security 
+      description: This endpoint is used to create hierarchy information for users.
+      body:  
+        application/json:
+          type: commonlib.postHierarchyInformation
+          example: !include examples/requestExample/userProfile/hierarchyInformation/post_hierarchyInfo_example.raml
+      responses: 
+        201:
+          body: 
+            application/json:
+              example: !include examples/responseExample/userProfile/post_example.raml
+    /{EmployeeID}:
+      uriParameters:
+          "EmployeeID":
+            type: string
+            required: true
+            example: "EMP001"
+      get:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint retrieves user hierarchy information using the employee ID.
+        responses: 
+          200:
+            body: 
+              application/json:
+                example: !include examples/responseExample/userProfile/getHierarchyInformation_example.raml
+      delete:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint deletes a user's hierarchy information using the employee ID.
+        responses: 
+          200:
+            body: 
+              application/json:
+                example: !include examples/responseExample/userProfile/delete_example.raml
+      patch:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint facilitates updating user's hierarchy information via the employee ID.
+        body:
+          application/json:  
+            type: commonlib.updateHierarchyInformation
+            example: !include examples/requestExample/userProfile/hierarchyInformation/update_hierarchyInfo_example.raml
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include examples/responseExample/userProfile/update_example.raml
+  /workInformation:
+    get:
+      is:
+          - commonlib.errorResponse
+          - commonlib.security 
+      description: This endpoint retrieves all user's work information details.
+      responses: 
+        200:
+          body: 
+            application/json:
+              example: !include examples/responseExample/userProfile/get_workInformation_example.raml
+    post:
+      is:
+          - commonlib.errorResponse
+          - commonlib.security 
+      description: This endpoint is used to create work information for users.
+      body:  
+        application/json:
+          type: commonlib.postWorkInformation
+          example: !include examples/requestExample/userProfile/workInformation/post_workInformation_example.raml
+      responses: 
+        201:
+          body: 
+            application/json:
+              example: !include examples/responseExample/userProfile/post_example.raml
+    /{EmployeeID}:
+      uriParameters:
+          "EmployeeID":
+            type: string
+            required: true
+            example: "EMP001"
+      get:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint retrieves user work information using the employee ID.
+        responses: 
+          200:
+            body: 
+              application/json:
+                example: !include examples/responseExample/userProfile/get_workInformation_example.raml
+      delete:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint deletes a user's work information using the employee ID.
+        responses: 
+          200:
+            body: 
+              application/json:
+                example: !include examples/responseExample/userProfile/delete_example.raml
+      patch:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint facilitates updating user's work information via the employee ID.
+        body:
+          application/json:  
+            type: commonlib.updateWorkInformation
+            example: !include examples/requestExample/userProfile/workInformation/update_workInformation_example.raml
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include examples/responseExample/userProfile/update_example.raml
+  /supportingDocuments:
+    get:
+      is:
+          - commonlib.errorResponse
+          - commonlib.security 
+      description: This endpoint retrieves all user's supporting document details.
+      responses: 
+        200:
+          body: 
+            multipart/form-data:
+              example: !include examples/responseExample/userProfile/get_supportingDocuments_example.raml
+    post:
+      is:
+          - commonlib.errorResponse
+          - commonlib.security 
+      description: This endpoint is used to create support document details for users.
+      body:  
+        multipart/form-data:
+          type: commonlib.postSupportingDocuments
+          example: !include examples/requestExample/userProfile/supportingDocuments/post_supportingDocuments_example.raml
+      responses: 
+        201:
+          body: 
+            multipart/form-data:
+              example: !include examples/responseExample/userProfile/post_example.raml
+    /{EmployeeID}:
+      uriParameters:
+          "EmployeeID":
+            type: string
+            required: true
+            example: "EMP001"
+      get:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint retrieves user support document detail using the employee ID.
+        responses: 
+          200:
+            body: 
+              multipart/form-data:
+                example: !include examples/responseExample/userProfile/get_supportingDocuments_example.raml
+      delete:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint deletes a user's support document details using the employee ID.
+        responses: 
+          200:
+            body: 
+              application/json:
+                example: !include examples/responseExample/userProfile/delete_example.raml
+      patch:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint facilitates updating user's support document details through the employee ID.
+        body:
+          multipart/form-data:  
+            type: commonlib.updateSupportingDocuments
+            example: !include examples/requestExample/userProfile/supportingDocuments/update_supportingDocuments_example.raml
+        responses:
+          200:
+            body:
+              multipart/form-data:
+                example: !include examples/responseExample/userProfile/update_example.raml
+  /profileImage:
+    get:
+      is:
+          - commonlib.errorResponse
+          - commonlib.security 
+      description: This endpoint retrieves all user's profile images.
+      responses: 
+        200:
+          body: 
+            multipart/form-data:
+              example: !include examples/responseExample/userProfile/get_profileImage_example.raml
+    post:
+      is:
+          - commonlib.errorResponse
+          - commonlib.security 
+      description: This endpoint is used to insert the profile image for users.
+      body:  
+        multipart/form-data:
+          type: commonlib.postProfileImage
+          example: !include examples/requestExample/userProfile/profileImage/post_profileImage_example.raml
+      responses: 
+        201:
+          body: 
+            multipart/form-data:
+              example: !include examples/responseExample/userProfile/post_example.raml
+    /{EmployeeID}:
+      uriParameters:
+          "EmployeeID":
+            type: string
+            required: true
+            example: "EMP001"
+      get:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint retrieves user's profile image using the employee ID.
+        responses: 
+          200:
+            body: 
+              multipart/form-data:
+                example: !include examples/responseExample/userProfile/get_profileImage_example.raml
+      delete:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint deletes a user's profile image using the employee ID.
+        responses: 
+          200:
+            body: 
+              application/json:
+                example: !include examples/responseExample/userProfile/delete_example.raml
+      patch:
+        is:
+          - commonlib.errorResponse
+          - commonlib.security 
+        description: This endpoint facilitates updating user's profile image via the employee ID.
+        body:
+          multipart/form-data:  
+            type: commonlib.updateProfileImage
+            example: !include examples/requestExample/userProfile/profileImage/update_profileImage_example.raml
+        responses:
+          200:
+            body:
+              multipart/form-data:
+                example: !include examples/responseExample/userProfile/update_example.raml
+            

@@ -1,0 +1,235 @@
+#%RAML 1.0
+title: user-profile-papi
+description: 
+version: 1.0
+protocols: [HTTP ,HTTPS]
+ 
+uses:
+  "commonlib" : libraries/commonLibrary.raml
+resourceTypes:
+  "resources": !include resourceTypes/resourceTypes.raml 
+  "resourceType-uri": !include resourceTypes/resourceType-uri.raml
+
+/user-profile:
+  /payrollInformation:
+    
+      
+    type:
+      "resources":
+        GetResponseExample: !include Examples/ResponseExample/getPayrollInformationExample.raml
+        postTypeName:  
+                   commonlib.postPayrollInformation
+        postRequestExample:  !include Examples/RequestExample/payrollInformation/postPayrollInformationExample.raml
+      
+    /{EmployeeID}:
+     type:
+        "resourceType-uri":
+          GetResponseExample: !include Examples/ResponseExample/getPayrollInformationExample.raml
+          
+          UpdateType: commonlib.updatePayrollInformation 
+          UpdateRequestExample: !include Examples/RequestExample/payrollInformation/updatePayrollInformationExample.raml
+        
+
+      
+  /identityInformation:
+
+    type:
+      resources:
+        GetResponseExample: !include Examples/ResponseExample/getIdentityInformationExample.raml
+        postTypeName:  
+                   commonlib.postIdentityInformation
+        postRequestExample:  !include Examples/RequestExample/identityInformation/postIdentityInformationExample.raml
+
+    /{EmployeeID}:
+     type:
+        "resourceType-uri":
+          GetResponseExample: !include Examples/ResponseExample/getIdentityInformationExample.raml
+          
+          UpdateType: commonlib.updateIdentityInformation 
+          UpdateRequestExample: !include Examples/RequestExample/identityInformation/updateIdentityInformationExample.raml
+        
+  /personalDetails:
+    type: 
+      resources:
+        GetResponseExample:  !include Examples/ResponseExample/getPersonalDetailsExample.raml
+        postTypeName:  
+                   commonlib.postpersonalDetails
+        postRequestExample:  !include Examples/RequestExample/personalDetails/postPersonalDetailsExample.raml
+
+    /{EmployeeID}:
+     type:
+        "resourceType-uri":
+          GetResponseExample: !include Examples/ResponseExample/getPersonalDetailsExample.raml
+          
+          UpdateType: commonlib.updatepersonalDetails 
+          UpdateRequestExample: !include Examples/RequestExample/personalDetails/updatePersonalDetailsExample.raml
+
+  /professionalReferences:
+    type:
+      resources:
+        GetResponseExample: !include Examples/ResponseExample/getProfessionalReferenceExample.raml
+        postTypeName:  
+                   commonlib.postprofessionalReferences
+        postRequestExample:  !include Examples/RequestExample/professionalReference/postProfessionalReferenceExample.raml
+
+    /{EmployeeID}:
+      type:
+        "resourceType-uri":
+          GetResponseExample: !include Examples/ResponseExample/getProfessionalReferenceExample.raml
+          
+          UpdateType: commonlib.updateprofessionalReferences 
+          UpdateRequestExample: !include Examples/RequestExample/professionalReference/updateProfessionalReferenceExample.raml
+
+  /emergencyDetails:
+    type:
+      resources:
+        GetResponseExample:  !include Examples/ResponseExample/getEmergencyDetailsExample.raml
+        postTypeName:  
+                   commonlib.postEmergencyDetails
+        postRequestExample:  !include Examples/RequestExample/emergencyDetails/postEmergencyDetailsExample.raml
+    /{EmployeeID}:
+      type:
+        "resourceType-uri":
+          GetResponseExample: !include Examples/ResponseExample/getEmergencyDetailsExample.raml
+          
+          UpdateType: commonlib.updateEmergencyDetails 
+          UpdateRequestExample: !include Examples/RequestExample/emergencyDetails/updateEmergencyDetailsExample.raml
+
+  /hierarchyInformation:
+    type:
+      resources:
+        GetResponseExample: !include Examples/ResponseExample/getHierarchyInformationExample.raml
+        postTypeName:  
+                   commonlib.postHierarchyInformation
+        postRequestExample:  !include Examples/RequestExample/hierarchyInformation/postHierarchyInformationExample.raml
+    /{EmployeeID}:
+     type:
+        "resourceType-uri":
+          GetResponseExample: !include Examples/ResponseExample/getHierarchyInformationExample.raml
+          
+          UpdateType: commonlib.updateHierarchyInformation 
+          UpdateRequestExample: !include Examples/RequestExample/hierarchyInformation/updateHierarchyInformationExample.raml
+
+  /workInformation:
+     type:
+      resources:
+        GetResponseExample: !include Examples/ResponseExample/getWorkInformationExample.raml
+        postTypeName:  
+                   commonlib.postWorkInformation
+        postRequestExample:  !include Examples/RequestExample/workInformation/postWorkInformationExample.raml 
+     /{EmployeeID}:
+      type:
+        "resourceType-uri":
+          GetResponseExample: !include Examples/ResponseExample/getWorkInformationExample.raml
+          
+          UpdateType: commonlib.updateWorkInformation 
+          UpdateRequestExample: !include Examples/RequestExample/workInformation/updateWorkInformationExample.raml
+  
+
+  /supportingDocuments:
+     get:
+      description: "This API is used to retrieve all details about "
+      responses: 
+        200:
+          body: 
+             multipart/form-data:
+              example: !include Examples/ResponseExample/getSupportingDocumentsExample.raml
+  
+     post:
+       description: "This API is used to create "
+       body:  
+         multipart/form-data: 
+           type:  commonlib.postSupportingDocuments
+           example:  !include Examples/RequestExample/supportingDocuments/postSupportingDocumentsExample.raml
+       responses: 
+        201:
+          body: 
+            multipart/form-data:
+              example: !include Examples/ResponseExample/PostExample.raml
+               
+     /{EmployeeID}:
+      uriParameters:
+        EmployeeID:
+          type: string
+          required: true
+          example: "EMP001"
+      get:
+        description: "This API is used to retrieve all details"
+        responses:
+          200:
+            body:
+              multipart/form-data:
+                example: !include Examples/ResponseExample/getSupportingDocumentsExample.raml
+      delete:
+        description: "This API is used to Delete all details"
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include Examples/ResponseExample/DeleteExample.raml
+      patch:
+        description: "Update Employee specified by ID"
+        body:
+          multipart/form-data:
+            type: commonlib.updateSupportingDocuments
+            example: !include Examples/RequestExample/supportingDocuments/updateSupportingDocumentsExample.raml
+        responses:
+          200:
+            body:
+              multipart/form-data:
+  /profileImage:  
+     get:
+      description: "This API is used to retrieve all details about "
+      responses: 
+        200:
+          body: 
+             multipart/form-data:
+              
+  
+     post:
+       description: "This API is used to create "
+       body:  
+         multipart/form-data: 
+         
+           type: commonlib.postProfileImage
+          
+       responses: 
+        201:
+          body: 
+            multipart/form-data:
+              
+               
+     /{EmployeeID}:
+      
+      uriParameters:
+         "EmployeeID":
+             type: string
+             required: true
+             example:
+                "EMP001"
+      get:
+        description: "This API is used to retrieve all details    "
+        responses: 
+          200:
+           body: 
+             multipart/form-data: 
+                
+      delete:
+        description: "This API is used to Delete all details    "
+        responses: 
+          200:
+           body: 
+            application/json:
+                example: !include Examples/ResponseExample/DeleteExample.raml
+            
+      patch:
+        description: "Update Employee specified by ID "
+        body:
+         multipart/form-data:
+            type: commonlib.updateProfileImage 
+             
+        responses:
+          200:
+           body:
+            multipart/form-data: 
+             

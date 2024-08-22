@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule  
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<error-handler name="errorHandlingError_Handler" doc:id="80346560-533b-470a-a3fb-202fda226d09" >
+		  <on-error-propagate type="APIKIT:BAD_REQUEST">
+			<set-variable value="#[400]" doc:name="HTTP Status Variable" doc:id="3eea0ee6-4e67-4b0f-b329-305d1022c322" variableName="httpStatus"/>
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{message: "Bad request"}]' doc:name="Set Payload" doc:id="b1f34f90-dda1-4cb8-bfe3-a52259581b47" />
+            
+</on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+			<set-variable value="404" doc:name="HTTP Status Variable" doc:id="62f975ab-a330-491e-b8db-5c72b6861f81" variableName="httpStatus" />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{message: "Resource not found"}]' doc:name="Set Payload" doc:id="8e20496d-3ba4-4aa1-8464-f67ff2f5c35a" />
+            
+</on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+			<set-variable value="405" doc:name="HTTP Status Variable" doc:id="5fd32383-cd5e-404d-a45d-2a08d355472c" variableName="httpStatus" />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{message: "Method not allowed"}]' doc:name="Set Payload" doc:id="46a18b2f-2427-4ac9-a638-e1238d2455bd" />
+            
+</on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+			<set-variable value="406" doc:name="HTTP Status Variable" doc:id="e4b4094c-9607-4ecc-b379-dc33aa290189" variableName="httpStatus" />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{message: "Not acceptable"}]' doc:name="Set Payload" doc:id="765a0a2d-eeb0-4383-a59b-762f85f12a8b" />
+            
+</on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+			<set-variable value="415" doc:name="HTTP Status Variable" doc:id="15563eb8-7155-43c6-8853-d0260b0c1ef3" variableName="httpStatus" />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{message: "Unsupported media type"}]' doc:name="Set Payload" doc:id="3b0dedc4-76d6-4d03-86a5-61726d823ee9" />
+            
+</on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+			<set-variable value="501" doc:name="HTTP Status Variable" doc:id="d13cdc09-b5ef-455b-9d52-a61c7f5e3593" variableName="httpStatus" />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{message: "Not Implemented"}]' doc:name="Set Payload" doc:id="51d51e26-e86c-4c19-b8fd-30f343bcd219" />
+            
+</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="6c29ae51-1168-4aab-ac5a-6743b5e02bed" type="ERROR:USERNAME">
+			<set-variable value="401" doc:name="HTTP Status Variable" doc:id="67a6624b-6f8f-4ee8-acb3-55a7b99121ac" variableName="httpStatus" />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{message: "User does not exist"}]' doc:name="Set Payload" doc:id="5c3a99e2-8777-4583-8efe-f78db59bfa74" />
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="387bf5b9-0e7e-4a19-9cbb-d1818e511bfa" type="ERROR:ALREADYEXIST">
+			<set-variable value="403" doc:name="HTTP Status Variable" doc:id="29d2fb6c-0388-47e7-8def-5b96bdbc3f13" variableName="httpStatus" />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{message: "email id already exists"}]' doc:name="Set Payload" doc:id="5eb17673-79ad-4495-8bed-123491030c71" />
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="c1dcf592-39fe-4507-a5c1-f399cae2c269" type="ERROR:NODATAFOUND" >
+			<set-variable value="401" doc:name="HTTP Status Variable" doc:id="884b0da1-1a22-4958-8405-4b52dedc6996" variableName="httpStatus" />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{message: "No data found for the provided email ID in our system. Please check your email ID and try again."}]' doc:name="Set Payload" doc:id="9480d51c-8b77-4cc4-965b-0ee8b9780421" />
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="61c39c4c-d594-4c90-af7a-75a631c9e27f" type="ERROR:OTP" >
+			<set-variable value="400" doc:name="HTTP Status Variable" doc:id="4c910c0e-1c4f-4174-87ea-f589e6b12a72" variableName="httpStatus" />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{message: "Invalid OTP. Please enter the correct OTP to complete the  process."}]' doc:name="Set Payload" doc:id="ad62990d-0a27-42e5-883d-71e908739556" />
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="e816bed0-3779-4d2d-9bed-b19e31920c53" type="ERROR:PASSWORD" >
+			<set-variable value="401" doc:name="HTTP Status Variable" doc:id="3ab81f16-e6fe-4afd-a259-939261ff5d7d" variableName="httpStatus" />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;    "message": "Password should not be same as your last 1 password(s)"&#10;}]' doc:name="Set Payload" doc:id="31bba070-2f61-4bba-b6ef-5f4e77368bdc" />
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="e589f6e1-8e8f-476e-91bb-fad2077853fc" type="ERROR:USER_PASSWORD" >
+			<set-variable value="401" doc:name="HTTP Status Variable" doc:id="effff520-1128-462a-a490-c3b261191cd5" variableName="httpStatus" />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;    "message": "Password is incorrect"&#10;}]' doc:name="Set Payload" doc:id="9a569449-50dd-4173-ac4c-2015fab74c2f" />
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="365eb437-db51-410d-b5e6-c0bb8e3b58e8" type="ERROR:EMPID" >
+			<set-variable value="401" doc:name="HTTP Status Variable" doc:id="b607745b-fb6b-403c-9bb3-acf12bda2f87" variableName="httpStatus" />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;    "message": "EmployeeID already exist"&#10;}]' doc:name="Set Payload" doc:id="c5024054-5848-44c6-952a-a8b9c506a95c" />
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="480cccd3-d240-4247-b7d9-9b0f17a67871" type="ERROR:PHONENUMBER" >
+			<set-variable value="401" doc:name="HTTP Status Variable" doc:id="0023ef08-bdbe-446d-9cae-42b99224dfac" variableName="httpStatus" />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;    "message": "Phone number already exist"&#10;}]' doc:name="Set Payload" doc:id="5aa97d19-1b22-4259-bab1-d1671b452a51" />
+		</on-error-propagate>
+</error-handler>
+</mule>

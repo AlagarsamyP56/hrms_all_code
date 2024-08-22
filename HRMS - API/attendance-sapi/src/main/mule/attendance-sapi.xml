@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"   xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd   ">
+    <flow name="attendance-sapi-main">
+        <http:listener config-ref="attendance-sapi-httpListenerConfig" path="${http.path}">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="attendance-sapi-config" />
+        <error-handler ref="main-errorHandler">
+            
+        </error-handler>
+    </flow>
+    <flow name="attendance-sapi-console">
+        <http:listener config-ref="attendance-sapi-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="attendance-sapi-config" />
+        <error-handler ref="console-errorHandler">
+            
+        </error-handler>
+    </flow>
+    <flow name="get:\attendance\totalHours\(EmployeeID):attendance-sapi-config">
+        <logger level="INFO" doc:name="totalHours flow started" doc:id="fcedcc16-6e52-47d3-80b6-d6ad6af37066" message="totalHours flow started"/>
+		<set-variable value="#[attributes.queryParams.'Date']" doc:name="entryDate" doc:id="079882f5-5242-43ca-8d7e-34def56e0ed8" variableName="entryDate"/>
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="EmployeeID" doc:id="5186487f-5839-49ec-ba1a-996d8f39fc6e" variableName="EmployeeID"/>
+        <logger level="INFO" doc:name="Before TotalhoursSub_Flow" doc:id="b958a09c-6909-4997-9b26-95fdab43f4b8" message="Before TotalhoursSub_Flow"/>
+		<flow-ref doc:name="TotalhoursSub_Flow" doc:id="bd409659-b7c9-492b-b2cf-142131b65592" name="TotalhoursSub_Flow"/>
+    </flow>
+    <flow name="post:\attendance\entry:application\json:attendance-sapi-config">
+        <logger level="INFO" doc:name="entry flow started" doc:id="5a263f10-17c1-4f82-af9a-4c4bac0ab851" message="entry flow started"/>
+		<flow-ref doc:name="attendanceEntrySub_Flow" doc:id="e000ff70-9f73-4f28-81f6-5728700e1554" name="attendanceEntrySub_Flow"/>
+    </flow>
+</mule>

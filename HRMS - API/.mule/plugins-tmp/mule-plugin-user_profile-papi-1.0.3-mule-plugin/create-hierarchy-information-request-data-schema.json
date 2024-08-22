@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/postHierarchyInformation",
+  "definitions": {
+    "postHierarchyInformation": {
+      "type": "object",
+      "example": {
+        "EmployeeID": "DW001",
+        "ReportingManager": "peter"
+      },
+      "additionalProperties": true,
+      "required": [
+        "EmployeeID"
+      ],
+      "properties": {
+        "EmployeeID": {
+          "type": "string"
+        },
+        "ReportingManager": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

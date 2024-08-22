@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/postEmergencyDetails",
+  "definitions": {
+    "postEmergencyDetails": {
+      "type": "object",
+      "example": {
+        "EmployeeID": "DW001",
+        "Name": "Alice Smith",
+        "Relationship": "Parent",
+        "EmailID": "alice.parent@example.com",
+        "PhoneNumber": 9876543210
+      },
+      "additionalProperties": true,
+      "required": [
+        "EmployeeID"
+      ],
+      "properties": {
+        "EmployeeID": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Relationship": {
+          "type": "string"
+        },
+        "EmailID": {
+          "type": "string"
+        },
+        "PhoneNumber": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" 	  xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd    
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+	<flow name="user_profile-papi-main">
+        <http:listener config-ref="user_profile-sapi-httpListenerConfig" path="${http.path}">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body ><![CDATA[#[payload]]]></http:body>
+				<http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+		<apikit:router config-ref="user_profile-papi-config" />
+		<error-handler ref="main-errorHandler">
+           
+        </error-handler>
+    </flow>
+    <flow name="delete:\user-profile\professionalReferences\(EmployeeID):user_profile-papi-config">
+		<set-variable value="#[p('userProfile_sapi.professionalReferences_emp')]" doc:name="Path Variable" doc:id="e7c9aea8-194c-436b-84c0-1d6720d43fec" variableName="Path"/>
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="451b8b6e-a931-42c9-b0f1-e019a3b8876e" variableName="Method"/>
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="d8676f00-7f75-439b-b5ac-60965f54fb9e" variableName="EmployeeID"/>
+		<flow-ref doc:name="User Profile API" doc:id="dbaa8dfb-5ec9-4fb1-aed9-39dc86d7db5c" name="commonRequestSub_Flow" />
+		<flow-ref doc:name="Delete EmployeeID" doc:id="d5a4ce90-62fc-4e86-8c30-dc2788155686" name="Delete_EmployeeID-Sub_Flow" />
+    </flow>
+    <flow name="delete:\user-profile\personalDetails\(EmployeeID):user_profile-papi-config">
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="fcac29df-c673-46b5-90c6-5e7fcceae0d2" variableName="EmployeeID" />
+		<set-variable value="#[p('userProfile_sapi.personalDetails_emp')]" doc:name="Path Variable" doc:id="c358680c-0bce-4708-8ba5-3a3a24fb715c" variableName="Path" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="1388f790-29f2-427f-8843-2dd76f84d4b2" variableName="Method" />
+		<flow-ref doc:name="User Profile API" doc:id="a430f24b-40d0-4b82-b847-370a36d39b84" name="commonRequestSub_Flow" />
+		<flow-ref doc:name="Delete EmployeeID" doc:id="1ea82159-0d24-49a2-a4ba-5d0e0374022e" name="Delete_EmployeeID-Sub_Flow" />
+    </flow>
+    <flow name="delete:\user-profile\profileImage\(EmployeeID):user_profile-papi-config">
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="89ddd7d6-0a9e-4c27-a1b3-415add15eaef" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="03792439-04b9-4129-8949-f99f1b872635" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.profileImage_emp')]" doc:name="Path Variable" doc:id="1a684e74-bc01-4362-a7a7-c381b395a712" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="f9ffee90-eb69-426b-a846-e56062445840" name="commonRequestSub_Flow" />
+		<flow-ref doc:name="Delete EmployeeID" doc:id="7db503e1-b9bd-437b-8c36-ed1b5378bd9f" name="Delete_EmployeeID-Sub_Flow" />
+    </flow>
+    <flow name="delete:\user-profile\workInformation\(EmployeeID):user_profile-papi-config">
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="4b7dfbe2-e4bf-42ae-a17d-9f20aade7e8c" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="2e8aa88c-df04-4549-9dad-65f348d1bedf" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.workInformation_emp')]" doc:name="Path Variable" doc:id="6dcee381-07ac-47a7-8b51-13dd46b70ab5" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="eddcaf35-0948-48b4-a702-f34420b0f251" name="commonRequestSub_Flow" />
+		<flow-ref doc:name="Delete EmployeeID" doc:id="7c7f5db7-91fa-4b90-8a97-a4c4aef56e8a" name="Delete_EmployeeID-Sub_Flow" />
+    </flow>
+    <flow name="delete:\user-profile\emergencyDetails\(EmployeeID):user_profile-papi-config">
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="d9c06e59-f3ae-45e6-9e3a-56fbcf6e9918" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="ba0805a3-afce-4320-a758-86c8ee436d6a" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.emergencyDetails_emp')]" doc:name="Path Variable" doc:id="059e7910-a73b-4cb4-a347-4629f2850d59" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="e7ccfa45-3a3f-457d-9405-b9a5d3898016" name="commonRequestSub_Flow" />
+		<flow-ref doc:name="Delete EmployeeID" doc:id="92814cbf-a1d5-493e-9a01-e5fc4fc2d160" name="Delete_EmployeeID-Sub_Flow" />
+    </flow>
+    <flow name="delete:\user-profile\payrollInformation\(EmployeeID):user_profile-papi-config">
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="a85b3b47-e112-496a-a674-1210ac8607c4" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="5625d693-cc70-4d49-9594-42d28d89ae69" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.payrollInformation_emp')]" doc:name="Path Variable" doc:id="545dac39-1d5f-4c33-bd8c-daf77301c066" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="277de8c0-120a-4ffe-973f-46e1eec4883f" name="commonRequestSub_Flow" />
+		<flow-ref doc:name="Delete EmployeeID" doc:id="6800b912-2872-4bdc-88ac-a5ce51a0c146" name="Delete_EmployeeID-Sub_Flow" />
+    </flow>
+    <flow name="delete:\user-profile\identityInformation\(EmployeeID):user_profile-papi-config">
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="4b3da20e-2764-4915-a38d-8c11a24747fc" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="b2806d80-6a4b-4a2f-b051-ecf17aa3ff75" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.identityInformation_emp')]" doc:name="Path Variable" doc:id="68e5ae08-7c98-466c-a4be-7f48ce599e3d" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="05f4c2c9-2e42-40d5-af55-28cb2519b52f" name="commonRequestSub_Flow" />
+		<flow-ref doc:name="Delete EmployeeID" doc:id="3803dd50-d3c6-4cf7-a4dd-c95c9ad268bf" name="Delete_EmployeeID-Sub_Flow" />
+    </flow>
+    <flow name="delete:\user-profile\supportingDocuments\(EmployeeID):user_profile-papi-config">
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="919e6b79-837a-4988-9289-4e41c2bafac2" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="4560216f-f495-46d2-aac5-42c122bc087a" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.supportingDocuments_emp')]" doc:name="Path Variable" doc:id="066eaace-bcc9-4b2b-a122-9d03408159b8" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="cb1e4cfe-08c4-445b-9f02-8bfe3acefb33" name="commonRequestSub_Flow" />
+		<flow-ref doc:name="Delete EmployeeID" doc:id="1d735ff8-b720-45db-a383-83125557aa59" name="Delete_EmployeeID-Sub_Flow" />
+    </flow>
+    <flow name="delete:\user-profile\hierarchyInformation\(EmployeeID):user_profile-papi-config">
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="c90fb973-c242-4659-ad1b-2662479cd3ce" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="b77ec068-e2cd-4efc-b3b1-2f2bb0a62067" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.hierarchyInformation_emp')]" doc:name="Path Variable" doc:id="ff152392-39f6-4b22-b18b-c024a38345e5" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="7fadefe9-c493-4926-ac24-f2a7a4ad2999" name="commonRequestSub_Flow" />
+		<flow-ref doc:name="Delete EmployeeID" doc:id="5f468c43-c4c3-4807-a677-5551102d4f78" name="Delete_EmployeeID-Sub_Flow" />
+    </flow>
+    <flow name="patch:\user-profile\personalDetails\(EmployeeID):application\json:user_profile-papi-config">
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="payload Variable" doc:id="991f1d7b-bde7-4fad-9962-9b35f46cbc3d" variableName="payload"/>
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="be263604-c8f2-4ba5-84c4-468378d61414" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="9619ef7e-450f-4fe4-8345-fd598f36b063" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.personalDetails_emp')]" doc:name="Path Variable" doc:id="36b12137-2f47-456b-89d4-8b59a55063db" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="5a5ac389-6c2f-433e-b6ee-46b8ea3ccc58" name="commonRequestSub_Flow" />
+		<flow-ref doc:name="Upadate EmployeeID" doc:id="55c7ee75-47e7-4de3-98a8-f73d7bb173e7" name="Upadate_EmployeeID-Sub_Flow" />
+    </flow>
+    <flow name="patch:\user-profile\identityInformation\(EmployeeID):application\json:user_profile-papi-config">
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="payload Variable" doc:id="dcfb5ef8-11b3-4b3f-ad7b-39756d76fdd0" variableName="payload" />
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="eb1402b7-b201-44bc-8c20-67db69e0a115" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="a1b35d22-081c-40a2-b2ea-c8881a9381fc" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.identityInformation_emp')]" doc:name="Path Variable" doc:id="7d3f47ba-a023-4e31-893e-2aee25d6ce0b" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="8cd0e503-6ac7-4101-8896-9c9591108540" name="commonRequestSub_Flow" />
+		<flow-ref doc:name="Upadate EmployeeID" doc:id="38307f3e-4fa7-4a4c-9c3e-6443f290e5e3" name="Upadate_EmployeeID-Sub_Flow" />
+    </flow>
+    <flow name="patch:\user-profile\emergencyDetails\(EmployeeID):application\json:user_profile-papi-config">
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="payload Variable" doc:id="700b8d10-ea2d-4223-a596-f4bafe0ed815" variableName="payload" />
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="381e6e0a-e23c-4005-92e9-6b4b231c7b44" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="5a14f9e9-4096-4734-8332-154e758d0c33" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.emergencyDetails_emp')]" doc:name="Path Variable" doc:id="102ff155-c0cb-4b87-9487-326017ec151f" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="932a1a95-4a5f-427e-a867-deba2cdc48a4" name="commonRequestSub_Flow" />
+		<flow-ref doc:name="Upadate EmployeeID" doc:id="7b26f633-fae9-4ad0-8673-c369c2a273f6" name="Upadate_EmployeeID-Sub_Flow" />
+    </flow>
+    <flow name="patch:\user-profile\hierarchyInformation\(EmployeeID):application\json:user_profile-papi-config">
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="payload Variable" doc:id="5791f3f4-3c86-4e26-b4b1-2e273122fad7" variableName="payload" />
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="860979c2-e9f7-4492-ac4a-eb3547b7b081" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="559473c3-bc08-4402-85ff-a03b1e53fb21" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.hierarchyInformation_emp')]" doc:name="Path Variable" doc:id="cc4aeb56-51b7-4426-9ab2-71918dfadfb3" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="9db15d66-0bd2-484f-8eb5-7ee9e94fa4f0" name="commonRequestSub_Flow" />
+		<flow-ref doc:name="Upadate EmployeeID" doc:id="02d20957-6b8d-4c91-92c1-0774fbbd7279" name="Upadate_EmployeeID-Sub_Flow" />
+    </flow>
+    <flow name="patch:\user-profile\workInformation\(EmployeeID):application\json:user_profile-papi-config">
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="payload Variable" doc:id="4e7519b4-f59e-4ca0-ba8e-5da594f29b97" variableName="payload" />
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="aaafabe4-de53-4bca-b4a6-d0c997686bfe" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="0b485734-0ba0-4358-adb7-b11cb1c195cf" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.workInformation_emp')]" doc:name="Path Variable" doc:id="6abb43e4-d4dd-4d8b-9721-c7f02eb15ad2" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="8998714a-4783-4cf0-92e3-30c5d937b90e" name="commonRequestSub_Flow" />
+		<flow-ref doc:name="Upadate EmployeeID" doc:id="ca8933ac-8e3f-420b-b027-e855517bdc2d" name="Upadate_EmployeeID-Sub_Flow" />
+    </flow>
+    <flow name="patch:\user-profile\professionalReferences\(EmployeeID):application\json:user_profile-papi-config">
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="payload Variable" doc:id="658468a3-7531-466a-9b22-8b65baae1a39" variableName="payload" />
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="1c7304ff-7b8f-4af5-a480-a964be38bca0" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="dda4850e-0ea0-4e73-8c69-26581ece536d" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.professionalReferences_emp')]" doc:name="Path Variable" doc:id="042652f7-e3e4-439e-b09d-4c0d9b8d2881" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="8c640662-3a71-461f-b8a2-e19f15bcf381" name="commonRequestSub_Flow" />
+		<flow-ref doc:name="Upadate EmployeeID" doc:id="5251986a-0c4b-430a-8110-291bd7897b76" name="Upadate_EmployeeID-Sub_Flow" />
+    </flow>
+    <flow name="patch:\user-profile\payrollInformation\(EmployeeID):application\json:user_profile-papi-config">
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="payload Variable" doc:id="985d442f-b9dd-43fe-95eb-eb7b57747bae" variableName="payload" />
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="f9fb1bd0-da72-4663-ac67-0a137db2a6de" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="29fd4115-57cd-4906-bf11-c894cc7be97f" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.payrollInformation_emp')]" doc:name="Path Variable" doc:id="0cc4259d-9ca1-4838-bc9d-a03c0165925f" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="e1db289e-8be0-47e1-9ca3-711701f91aa0" name="commonRequestSub_Flow" />
+		<flow-ref doc:name="Upadate EmployeeID" doc:id="ff6bfa50-9287-4214-bbba-3dfca5f5461c" name="Upadate_EmployeeID-Sub_Flow" />
+    </flow>
+    <flow name="patch:\user-profile\profileImage\(EmployeeID):multipart\form-data:user_profile-papi-config">
+        <set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="payload Variable" doc:id="faccecc5-8829-409c-a077-359d87509c75" variableName="payload" />
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="19cbe831-6524-4a29-9c1b-258fc0603495" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="145b2aeb-4352-42e7-8508-7560a797f401" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.profileImage_emp')]" doc:name="Path Variable" doc:id="8aa7da65-7d86-4ff0-beb3-91b2d33905ed" variableName="Path" />
+		<set-variable value='#[%dw 2.0&#10;import * from dw::core::Binaries&#10;var image = readUrl(payload.parts.image.content , "application/octet-stream")&#10;output text/plain&#10;---&#10;toBase64(image as Binary)]' doc:name="Image Variable" doc:id="f7715d1d-1c97-44f9-aea8-32e6e4ad31b9" variableName="image"/>
+		<flow-ref doc:name="User Profile API" doc:id="d43761e6-b88f-4081-ad5f-595688133c3c" name="commonRequestSub_Flow" />
+		<flow-ref doc:name="Convert to Base64" doc:id="874575d0-d1dd-4aa4-a672-2e4786e7a25a" name="convert_to_Base64-Sub_Flow"/>
+    </flow>
+    <flow name="patch:\user-profile\supportingDocuments\(EmployeeID):multipart\form-data:user_profile-papi-config">
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="payload Variable" doc:id="3a0eaafb-89ab-473a-ad1b-407ca751fe44" variableName="payload" />
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="e389cb0b-a773-41d6-ab02-2a75eb0065c3" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="90d6719a-b608-45b9-8f57-b82e6ea2ad6c" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.supportingDocuments_emp')]" doc:name="Path Variable" doc:id="192854ac-12cd-401c-8bf7-e8a9be2496c9" variableName="Path" />
+		<flow-ref doc:name="User Profile API Flow Reference" doc:id="6538733d-5f36-4c3f-80fa-1b6b09e3fb25" name="commonRequestSub_Flow"/>
+		<flow-ref doc:name="Convert to Base6" doc:id="bbcacc3b-b968-4813-b5fc-e1f41bde791d" name="convert_to_Base64-Sub_Flow" />
+    </flow>
+    <flow name="get:\user-profile\emergencyDetails:user_profile-papi-config">
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="90165481-faae-4d54-ad5a-099a218f2c4f" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.emergencyDetails')]" doc:name="Path Variable" doc:id="3cc72719-ae71-4ba8-bd43-de42e5e3e9cb" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="24855ad1-a14e-4c82-9dd1-ac2bd8d0e414" name="commonRequestSub_Flow1" />
+		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="19754ec3-e33a-4f4a-aea5-5d20981798bc" message="No Data Found" >
+			<error-mapping targetType="VALIDATE:ERROR" />
+		</validation:is-not-empty-collection>
+		
+    </flow>
+    <flow name="get:\user-profile\hierarchyInformation:user_profile-papi-config">
+        <set-variable value='#["GET"]' doc:name="Method Variable" doc:id="30b78adb-3dbb-456a-92c2-a6dc580a0b70" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.hierarchyInformation')]" doc:name="Path Variable" doc:id="bd97a671-74ca-4537-a0da-052c9c79cce6" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="61ed2556-4864-47e1-aa0f-d1da70e5c0bf" name="commonRequestSub_Flow1" />
+		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="df152821-ce58-49d8-87ff-f39fbca7653b" message="No Data Found" >
+			<error-mapping targetType="VALIDATE:ERROR" />
+		</validation:is-not-empty-collection>
+    </flow>
+    <flow name="get:\user-profile\identityInformation:user_profile-papi-config">
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="9c578d1a-fff7-4db7-af96-89879e19f143" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.identityInformation')]" doc:name="Path Variable" doc:id="f5de97dc-3d85-41c9-a4d0-e73f0cd38047" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="d2b00b4d-917f-40bf-9262-f586c64b05e7" name="commonRequestSub_Flow1" />
+		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="b8fb005b-8c7e-4af3-b145-989607411bb9" message="No Data Found" >
+			<error-mapping targetType="VALIDATE:ERROR" />
+		</validation:is-not-empty-collection>
+    </flow>
+    <flow name="get:\user-profile\payrollInformation:user_profile-papi-config">
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="f6b424ac-0867-4aae-9619-09415f7dadbe" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.payrollInformation')]" doc:name="Path Variable" doc:id="b0eff39a-05a9-4b08-a972-e04eb6314913" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="1836706e-bc57-49bb-8057-0b1380049b73" name="commonRequestSub_Flow1" />
+		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="036bf98e-79ab-4930-9157-8aef3a7d369c" message="No Data Found" >
+			<error-mapping targetType="VALIDATE:ERROR" />
+		</validation:is-not-empty-collection>
+    </flow>
+    <flow name="get:\user-profile\personalDetails:user_profile-papi-config">
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="cf4d66cb-9a6c-4902-96aa-0eac87cab021" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.personalDetails')]" doc:name="Path Variable" doc:id="4093adeb-9868-4957-ae72-47bb344c1d93" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="d6d9639b-e108-47c9-a5d8-6fbd2ca95778" name="commonRequestSub_Flow1" />
+		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="763c8d95-fe20-41b5-a57e-604de4b24190" message="No Data Found" >
+			<error-mapping targetType="VALIDATE:ERROR" />
+		</validation:is-not-empty-collection>
+    </flow>
+    <flow name="get:\user-profile\professionalReferences:user_profile-papi-config">
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="b814f03c-2de9-4d84-a091-f0ef527bce39" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.professionalReferences')]" doc:name="Path Variable" doc:id="b54f0ca6-ed11-4d19-96b4-8e63acdd9c69" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="1439d0f2-d0c1-414e-84af-c3c5cbdd45dd" name="commonRequestSub_Flow1" />
+		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="15c68080-829e-48ef-9f3d-db4474a0eb72" message="No Data Found" >
+			<error-mapping targetType="VALIDATE:ERROR" />
+		</validation:is-not-empty-collection>
+    </flow>
+    <flow name="get:\user-profile\profileImage:user_profile-papi-config">
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="65cc377c-a53d-497b-823b-d09c8ef69b86" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.profileImage')]" doc:name="Path Variable" doc:id="e218c210-c17d-4a18-9115-3f204300728b" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="181d16d6-9fe0-4bfa-90c3-f75fdf09b47f" name="commonRequestSub_Flow1" />
+		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="df4206cd-e07a-4260-8d6a-c71ad9f063f3" message="No Data Found">
+			<error-mapping targetType="VALIDATE:ERROR" />
+		</validation:is-not-empty-collection>
+		<set-payload value="#[%dw 2.0&#10; &#10;import * from dw::core::Binaries&#10;output application/octet-stream&#10;var image = payload[0].image&#10;---&#10;fromBase64(image)]" doc:name="Set Payload" doc:id="d68c67f9-a5a9-4a19-9d0b-6c0c90f15b34" mimeType="image/png" />
+		 
+    </flow>
+    <flow name="get:\user-profile\supportingDocuments:user_profile-papi-config">
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="c20eb40a-613c-4a91-bf20-44cd9e1b5d6b" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.supportingDocuments')]" doc:name="Path Variable" doc:id="d5884d1f-3a22-4a67-8782-6bb36212cafe" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="981f8156-6d64-486a-b7dc-65a2d3b8844c" name="commonRequestSub_Flow1" />
+		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="cc55e0dc-ac9a-40b5-a101-8b99f1bfac71" message="No Data Found" >
+			<error-mapping targetType="VALIDATE:ERROR" />
+		</validation:is-not-empty-collection>
+    </flow>
+    <flow name="get:\user-profile\workInformation:user_profile-papi-config">
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="959124a1-54a0-4c78-bba3-d62d665963b4" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.workInformation')]" doc:name="Path Variable" doc:id="a0db7221-78bf-4126-bb65-59f7441a06c0" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="ca94b654-a153-467a-9163-3e735835e9bd" name="commonRequestSub_Flow1" />
+		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="b2a63e02-9882-4176-817a-ccb89d446739" message="No Data Found" >
+			<error-mapping targetType="VALIDATE:ERROR" />
+		</validation:is-not-empty-collection>
+    </flow>
+    <flow name="get:\user-profile\professionalReferences\(EmployeeID):user_profile-papi-config">
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="f0eb8adb-9581-4fac-b8d3-eae66b3d263e" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="239c2c18-92e5-412d-b6fc-3e12ae356bcb" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.professionalReferences_emp')]" doc:name="Path Variable" doc:id="ff930e8c-bb54-4fe3-aeaa-41f7bf75400e" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="24b5ac42-955e-4417-8ead-d4568752bf83" name="commonRequestSub_Flow" />
+		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="19760a5e-b4cc-4b33-9313-a94dd0967047" message="No Data Found" >
+			<error-mapping targetType="VALIDATE:ERROR" />
+		</validation:is-not-empty-collection>
+    </flow>
+    <flow name="get:\user-profile\personalDetails\(EmployeeID):user_profile-papi-config">
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="36eac245-d44d-4b58-ad06-ed3d69139fc5" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="552a3cb0-d5fb-4641-8df0-d4903556573b" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.personalDetails_emp')]" doc:name="Path Variable" doc:id="eb2e2790-57bd-4e9d-bc45-c9c6072441ca" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="efe4ff68-3039-4692-adc4-823db7247fbc" name="commonRequestSub_Flow" />
+		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="c22af56c-9300-4332-9cd0-1dc3617d53d0" message="No Data Found" >
+			<error-mapping targetType="VALIDATE:ERROR" />
+		</validation:is-not-empty-collection>
+    </flow>
+    <flow name="get:\user-profile\hierarchyInformation\(EmployeeID):user_profile-papi-config">
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="14f3a44d-784d-45e5-a079-ddf483e02515" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="cd51c031-8310-4996-a1e3-681504d6d72e" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.hierarchyInformation_emp')]" doc:name="Path Variable" doc:id="3fb063bf-2ce1-413c-8f46-0b0855239960" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="d00fcf39-45e0-4334-bff1-efbe4ca5755a" name="commonRequestSub_Flow" />
+		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="1bbd6472-7b7a-40cc-8a96-3569013b9b8d" message="No Data Found" >
+			<error-mapping targetType="VALIDATE:ERROR" />
+		</validation:is-not-empty-collection>
+    </flow>
+    <flow name="get:\user-profile\emergencyDetails\(EmployeeID):user_profile-papi-config">
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="5ee37794-c7f8-42b9-b52b-71f324b0793d" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="27f520f7-7bd4-493e-8c90-1c47af0a43d9" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.emergencyDetails_emp')]" doc:name="Path Variable" doc:id="cf5d2fc2-83e1-444d-8cbe-9c3273f5a519" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="fa1b0eeb-973e-4c84-8b1c-701dddd4397d" name="commonRequestSub_Flow" />
+		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="eb75434f-a91a-4210-b565-3afc6daa51d6" message="No Data Found" >
+			<error-mapping targetType="VALIDATE:ERROR" />
+		</validation:is-not-empty-collection>
+    </flow>
+    <flow name="get:\user-profile\workInformation\(EmployeeID):user_profile-papi-config">
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="64d3256b-2133-49f2-a32e-b33e963d0d71" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="56d70eab-238b-4654-93a0-6bdb21e794b8" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.workInformation_emp')]" doc:name="Path Variable" doc:id="871f10d2-50c2-45cb-a628-3b773847af4e" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="e365e9cc-bcd7-4057-a863-36bbae786a8a" name="commonRequestSub_Flow" />
+		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="ec0989f0-8369-4d42-a76e-31755739667e" message="No Data Found" >
+			<error-mapping targetType="VALIDATE:ERROR" />
+		</validation:is-not-empty-collection>
+    </flow>
+    <flow name="get:\user-profile\profileImage\(EmployeeID):user_profile-papi-config">
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="42af01c8-c6ed-4c3e-8791-727a5d1e1857" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="5ee37487-d748-49b7-9b3a-4f968bd69c0a" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.profileImage_emp')]" doc:name="Path Variable" doc:id="59ac39e3-8187-481e-9f04-327c8d0dd810" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="7c1693f6-413a-4ba4-92d2-11cf68cd760a" name="commonRequestSub_Flow" />
+		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="5ba6c4d9-01f5-48d9-9c7f-367d50d250d2" message="No Data Found">
+			<error-mapping targetType="VALIDATE:ERROR" />
+		</validation:is-not-empty-collection>
+		<choice doc:name="Choice" doc:id="8a2d4949-f47e-4964-b1d5-05e7db51a8e8" >
+			<when expression='#[((keysOf(payload[0])  filter ((item, index) -&gt; item ~= "image"))[0]) ~= "image"]'>
+				<set-payload value="#[%dw 2.0&#10; &#10;import * from dw::core::Binaries&#10;output application/octet-stream&#10;var image = payload[0].image&#10;---&#10;fromBase64(image)]" doc:name="convert to image" doc:id="289d3417-2aa3-45a8-a89a-fba3fc5db4de" mimeType="image/png" />
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="5148360b-4b95-4cd4-9917-dacf7d30700f" />
+			</otherwise>
+		</choice>
+    </flow>
+    <flow name="get:\user-profile\supportingDocuments\(EmployeeID):user_profile-papi-config">
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="48022c06-93f1-41aa-8a33-09b669b4f5ab" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="cd38656f-664c-407c-b83b-2dfa313b8e8f" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.supportingDocuments_emp')]" doc:name="Path Variable" doc:id="7f1b0ef8-e95a-4348-aa01-8bbcd9f377ca" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="2cd2c50d-ace8-490e-90e5-d529b1a9fd6f" name="commonRequestSub_Flow" />
+		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="432e0040-17a2-4cba-81d9-be26e93447a4" message="No Data Found" >
+			<error-mapping targetType="VALIDATE:ERROR" />
+		</validation:is-not-empty-collection>
+		<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="convert to pdf" doc:id="07fb3344-5847-4155-8bf3-7eccaae5a497" mimeType="application/pdf" />
+    </flow>
+    <flow name="get:\user-profile\identityInformation\(EmployeeID):user_profile-papi-config">
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="83eb4c6a-0423-4d35-94a6-a22266bb120a" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="63b82e01-e449-4a79-a34b-86d7a3cfc6df" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.identityInformation_emp')]" doc:name="Path Variable" doc:id="e67ab72e-5df7-4697-9475-185f418ca03e" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="0eca061d-e4c5-46ea-bfad-358c449e146a" name="commonRequestSub_Flow" />
+		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="dcf30b84-efdd-4df2-ba9e-8825d3036459" message="No Data Found" >
+			<error-mapping targetType="VALIDATE:ERROR" />
+		</validation:is-not-empty-collection>
+    </flow>
+    <flow name="get:\user-profile\payrollInformation\(EmployeeID):user_profile-papi-config">
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="42380d20-602c-4e72-b145-bc15c6d0fcdd" variableName="EmployeeID" />
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="cc67a60d-bc0b-4eb2-88e7-068c13fc63d3" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.payrollInformation_emp')]" doc:name="Path Variable" doc:id="4e009617-a519-4375-90b4-9d9ea340fc85" variableName="Path" />
+		<flow-ref doc:name="User Profile API" doc:id="12a97a71-8c55-418a-9f1c-e2b60eb2baa4" name="commonRequestSub_Flow" />
+		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="0cee7456-29e5-44c5-aac9-e9bc46719ecf" message="No Data Found" >
+			<error-mapping targetType="VALIDATE:ERROR" />
+		</validation:is-not-empty-collection>
+    </flow>
+    <flow name="post:\user-profile\emergencyDetails:application\json:user_profile-papi-config">
+		<set-variable value='#["POST"]' doc:name="Method Variable" doc:id="93fe2adb-0c49-4448-a063-7635b03f9d6e" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.emergencyDetails')]" doc:name="Path Variable" doc:id="fcaf1077-4eb1-4aa4-af8b-2336dda0c46c" variableName="Path" />
+		<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="Payload covert to json" doc:id="f8ddc0cd-7a09-4723-9181-d1c8a4138ade" />
+		<flow-ref doc:name="User Profile API" doc:id="6d6188fe-19ae-4c2c-8ccd-b82dceece98e" name="commonRequestSub_Flow1" />
+    </flow>
+    <flow name="post:\user-profile\hierarchyInformation:application\json:user_profile-papi-config">
+		<set-variable value='#["POST"]' doc:name="Method Variable" doc:id="7f534bf2-caad-4c33-a7c6-27907a1b54b4" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.hierarchyInformation')]" doc:name="Path Variable" doc:id="43200abe-fa22-4cda-968a-5556930fdecf" variableName="Path" />
+		<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="Payload covert to json" doc:id="02a60e15-1c03-4be0-8e74-ddeeb0742fe8" />
+		<flow-ref doc:name="User Profile API" doc:id="8131fb75-61e1-48c9-aced-f41f9cb8935b" name="commonRequestSub_Flow1" />
+    </flow>
+    <flow name="post:\user-profile\identityInformation:application\json:user_profile-papi-config">
+		<set-variable value='#["POST"]' doc:name="Method Variable" doc:id="611772ac-146d-4f6c-90ce-67e3bea91c20" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.identityInformation')]" doc:name="Path Variable" doc:id="36a464e8-b821-4b11-a1fc-5e7de1b80263" variableName="Path" />
+		<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="Payload covert to json" doc:id="b322762e-dc53-4df6-8779-4fec4436d40c" />
+		<flow-ref doc:name="User Profile API" doc:id="4c21a133-c1b3-40c2-b630-c8ff836f996a" name="commonRequestSub_Flow1" />
+    </flow>
+    <flow name="post:\user-profile\payrollInformation:application\json:user_profile-papi-config">
+		<set-variable value='#["POST"]' doc:name="Method Variable" doc:id="6340b128-291d-4a60-8750-e84efe72e7fb" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.payrollInformation')]" doc:name="Path Variable" doc:id="1cd2ee9d-6f19-4290-ac16-2e25e577f0a0" variableName="Path" />
+		<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="Payload covert to json" doc:id="12fc736c-7172-40e2-909a-fae471c9139d" />
+		<flow-ref doc:name="User Profile API" doc:id="4a82485e-b278-4068-84cf-9444697cf155" name="commonRequestSub_Flow1" />
+    </flow>
+    <flow name="post:\user-profile\personalDetails:application\json:user_profile-papi-config">
+		<set-variable value='#["POST"]' doc:name="Method Variable" doc:id="2e5653c8-bc1a-48e9-85da-f6270692ee2e" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.personalDetails')]" doc:name="Path Variable" doc:id="0db96e9f-70f7-40a0-8e63-6a07bb0a6936" variableName="Path" />
+		<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="Payload covert to json" doc:id="4e7e9361-aa39-4d73-87f3-45f0518c5cf5" />
+		<flow-ref doc:name="User Profile API" doc:id="c6a54ec0-5fda-4d1c-9f43-19b700a0023a" name="commonRequestSub_Flow1" />
+    </flow>
+    <flow name="post:\user-profile\professionalReferences:application\json:user_profile-papi-config">
+		<set-variable value='#["POST"]' doc:name="Method Variable" doc:id="2f47640d-3f7e-48d5-a758-355a1b9b8887" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.professionalReferences')]" doc:name="Path Variable" doc:id="13131deb-f0d3-4da8-8888-4477b64acc90" variableName="Path" />
+		<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="Payload covert to json" doc:id="3d21e273-4379-4892-933f-04b10060e84d" />
+		<flow-ref doc:name="User Profile API" doc:id="9307f0d7-d7a2-4a2d-bb86-02e29217752a" name="commonRequestSub_Flow1" />
+    </flow>
+    <flow name="post:\user-profile\profileImage:multipart\form-data:user_profile-papi-config">
+		<set-variable value='#[%dw 2.0&#10;import * from dw::core::Binaries&#10;var image = readUrl(payload.parts.image.content , "application/octet-stream")&#10;output text/plain&#10;---&#10;toBase64(image as Binary)]' doc:name="Image Variable" doc:id="93723046-6f8f-4166-bd9c-8d623b63382e" variableName="image"/>
+		<set-variable value='#["POST"]' doc:name="Method Variable" doc:id="bebc40d8-fa5a-4047-9378-0e14a26dd579" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.profileImage')]" doc:name="Path Variable" doc:id="6161bbeb-c70b-4e07-99bc-a0558b72f57e" variableName="Path" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{"EmployeeID": payload.parts.EmployeeID.content,&#10; "image": vars.image&#10;}]' doc:name="Concatenation EmployeeID" doc:id="bab5a18a-0be2-4431-9e20-6767911bc36b" />
+		<flow-ref doc:name="User Profile API" doc:id="e2b7854f-b3e6-46e9-bc3e-c32062bd8a9d" name="commonRequestSub_Flow1" />
+    </flow>
+    <flow name="post:\user-profile\supportingDocuments:multipart\form-data:user_profile-papi-config">
+		<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;"EmployeeID": payload.parts.EmployeeID.content]' doc:name="EMP Variable" doc:id="e115c788-9b9a-4815-bbe5-bcfe1ddba7b7" variableName="emp"/>
+		<set-variable value='#["POST"]' doc:name="Method Variable" doc:id="b6989f49-2295-4b56-8287-460c7b53438b" variableName="Method" />
+		<set-variable value="#[p('userProfile_sapi.supportingDocuments')]" doc:name="Path Variable" doc:id="b2f6f773-31b8-4f79-8901-fd9e7ead255e" variableName="Path" />
+		<set-payload value='#[%dw 2.0&#10;import * from dw::core::Binaries&#10;&#10;output application/json&#10;&#10;---&#10;&#10;(payload.parts - "EmployeeID") mapObject ((value, key, index) -&gt; &#10;    {&#10;        (key): toBase64((value.content) as Binary)&#10;    }&#10;)]' doc:name="convert to base64" doc:id="3546f704-e110-41e8-9dfb-fcf390b7a308" />
+		<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload ++ vars.emp]" doc:name="concatenation EmployeeID" doc:id="eb32c207-da09-4083-8747-436b30c0fc10" />
+		<flow-ref doc:name="User Profile API" doc:id="fb4f4e19-26a6-44c8-8455-c9ed395fd585" name="commonRequestSub_Flow1" />
+    </flow>
+    <flow name="post:\user-profile\workInformation:application\json:user_profile-papi-config">
+		<set-variable value="#[p('userProfile_sapi.workInformation')]" doc:name="Path Variable" doc:id="83d497d3-0fb6-447e-a4b5-489daf6cca48" variableName="Path" />
+		<set-variable value='#["POST"]' doc:name="Method Variable" doc:id="38083ee1-4833-4324-bc4b-99f8635891fa" variableName="Method" />
+		<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="Payload covert to json" doc:id="5447f8d5-8783-40c6-926b-0eba22ee0285" />
+		<flow-ref doc:name="User Profile API" doc:id="9972ef57-2f77-493d-a8a9-662bb448545e" name="commonRequestSub_Flow1" />
+    </flow>
+</mule>

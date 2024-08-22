@@ -1,0 +1,20 @@
+SFTP:
+  HOST: "gitlab.dwinsoft.in"
+  PORT: "22"
+  USER: "dwinsoft_sftp"
+  PASSWORD: "Good@123K"
+  
+SMTP:
+
+ HOST: "smtp.zoho.com"
+ PORT: "587"
+ USER: "alagarsamyp@dwinsoft.in"
+ PASSWORD: "kzVb7zWTD0AT"
+ 
+SALESFORCE:
+ 
+ USER: "alagarsamyp@dwinsoft.in"
+ PASSWORD: "Good@123"
+ SECURITY_TOKEN: "LoHhq3cQIbFxjcOgqJUMapXSA"
+ 
+ 

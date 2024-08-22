@@ -1,0 +1,15 @@
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://validationnamespace.raml.org" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://validationnamespace.raml.org">
+    <element name="root">
+        <complexType>
+            <all>
+                <element name="EmployeeID">
+                    <simpleType>
+                        <restriction base="string"/>
+                    </simpleType>
+                </element>
+                <element minOccurs="0" name="Image" type="base64Binary"/>
+                <any maxOccurs="unbounded" minOccurs="0" processContents="skip"/>
+            </all>
+        </complexType>
+    </element>
+</schema>

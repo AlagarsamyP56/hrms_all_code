@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	
+	xmlns:email="http://www.mulesoft.org/schema/mule/email"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd 
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	    <http:listener-config name="HumanResources-papi-httpListenerConfig">
+        <http:listener-connection host="${http.host}" port="${http.port}" />
+		<http:listener-interceptors >
+			<http:cors-interceptor >
+				<http:origins >
+					<http:public-resource />
+				</http:origins>
+			</http:cors-interceptor>
+		</http:listener-interceptors>
+    
+</http:listener-config>
+       <apikit:config name="humanResources-papi-config" api="humanResources-papi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <configuration-properties doc:name="Configuration properties" doc:id="afdab2a4-9ad8-4878-9e6d-57c11389fd76" file="config\dev.yaml" />
+	<http:request-config name="HumanResources_Request_configuration" doc:name="HTTP Request configuration" doc:id="7328549c-87ed-4bae-8935-588b4fa88acf" basePath="${HumanResources.basePath}" >
+		<http:request-connection host="${HumanResources.host}" connectionIdleTimeout="50000"/>
+	</http:request-config>
+	<http:request-config name="Notifications_Request_config" doc:name="HTTP Request configuration" doc:id="790a18f3-6ce8-4bdc-8a2f-f96d9ec1d05f" basePath="/${notification.basePath}">
+		<http:request-connection host="${notification.host}" />
+	</http:request-config>
+	 <os:object-store name="Forgot_password" doc:name="Object store" doc:id="43d92d57-484d-4168-9696-ef2ca10fa0ea" entryTtl="${os.Entryttl}" entryTtlUnit="HOURS" expirationInterval="${os.expirationInterval}" expirationIntervalUnit="HOURS" />
+	<os:object-store name="Signup" doc:name="Object store" doc:id="282d9af0-619c-4beb-bf66-3083a5672cbe" entryTtl="${os.Entryttl}" entryTtlUnit="HOURS" expirationInterval="${os.expirationInterval}" expirationIntervalUnit="HOURS" />
+	<os:object-store name="OTP" doc:name="Object store" doc:id="62651877-c8e3-4b2a-a2e2-6fd7ce884753" entryTtl="${os.otp.Entryttl}" entryTtlUnit="MINUTES" expirationInterval="${os.otp.expirationInterval}" />
+	
+ 
+</mule>

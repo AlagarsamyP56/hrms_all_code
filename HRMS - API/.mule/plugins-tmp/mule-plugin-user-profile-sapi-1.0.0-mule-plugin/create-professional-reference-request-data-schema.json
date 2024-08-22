@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/postprofessionalReferences",
+  "definitions": {
+    "postprofessionalReferences": {
+      "type": "object",
+      "example": {
+        "EmployeeID": "DW001",
+        "Name": "Alice Smith",
+        "EmailID": "alice@example.com",
+        "PhoneNumber": 1234567890,
+        "CurrentCompany": "ABC Corporation"
+      },
+      "additionalProperties": true,
+      "required": [
+        "EmployeeID",
+        "Name"
+      ],
+      "properties": {
+        "EmployeeID": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "EmailID": {
+          "type": "string"
+        },
+        "PhoneNumber": {
+          "type": "number"
+        },
+        "CurrentCompany": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

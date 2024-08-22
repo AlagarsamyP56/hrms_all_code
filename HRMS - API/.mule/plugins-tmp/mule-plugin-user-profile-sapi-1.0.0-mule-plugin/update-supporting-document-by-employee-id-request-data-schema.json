@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/updateSupportingDocuments",
+  "definitions": {
+    "updateSupportingDocuments": {
+      "type": "object",
+      "example": {
+        "HSC_PUC_CertificateMarksheet": "base64_encoded_data_here"
+      },
+      "additionalProperties": true,
+      "properties": {
+        "image": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

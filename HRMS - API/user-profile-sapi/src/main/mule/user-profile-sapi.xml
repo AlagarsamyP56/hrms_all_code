@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"   xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"  xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  
+ 
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<flow name="user_profile-sapi-main">
+        <http:listener config-ref="user_profile-sapi-httpListenerConfig" path="${http.api}">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="user_profile-sapi-config" />
+		<error-handler ref="main-errorHandler">
+           
+        </error-handler>
+    </flow>
+    <flow name="delete:\user-profile\profileImage\(EmployeeID):user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="81ff4d79-370d-4de0-a803-b2f02c4934ca" message="Delete ProfileImage flow start " />
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID  Variable" doc:id="5f030c8d-d5a1-4ba8-bd67-bd525ffad271" variableName="EmployeeID"/>
+		<set-payload value="#[p('db.Delete.ProfileImage')  ++ &quot;'&quot; ++ (vars.EmployeeID) ++ &quot;'&quot;]" doc:name="Delete DB query" doc:id="ecf963da-d5ee-4e52-abdf-b2e7fe7491b5" />
+		<flow-ref doc:name="Delete Database" doc:id="30eae774-deeb-4611-9928-3ac46b048cbc" name="delete_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User Delete successfully"&#10;} as Object {encoding: "UTF-8", mediaType: "application/json"}]' doc:name="Set Payload" doc:id="52588add-0a91-4463-af95-4f804a01728b" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="2b87793b-bd75-4926-8bd5-1543f455d9da" message="Delete ProfileImage End Successfully " />
+    </flow>
+    <flow name="delete:\user-profile\hierarchyInformation\(EmployeeID):user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="cab9bf7f-abf1-4d32-87ea-dba61a9ede82" message="Delete HierarchyInformation flow start " />
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID  Variable" doc:id="2f6d6d1c-d8ad-4b18-9016-edc458a15713" variableName="EmployeeID" />
+		<set-payload value="#[p('db.Delete.HierarchyInformation')  ++ &quot;'&quot; ++ (vars.EmployeeID) ++ &quot;'&quot;]" doc:name="Delete DB query" doc:id="82d5abec-f4db-493d-91bb-dce45a3fae92" />
+		<flow-ref doc:name="Delete Database" doc:id="4ab288d8-8cf1-4b0e-9bbf-d689579c3f11" name="delete_database_subFlow"/>
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User Delete successfully"&#10;} as Object {encoding: "UTF-8", mediaType: "application/json"}]' doc:name="Set Payload" doc:id="053c50c6-f4b2-48ee-b7c8-5f571e624438" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="91f5c26c-72ac-4e47-9ef5-c02fbc830783" message="Delete HierarchyInformation End Successfully " />
+    </flow>
+    <flow name="delete:\user-profile\emergencyDetails\(EmployeeID):user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="41702039-e5e5-4fc2-b404-0d0125174a53" message="Delete EmergencyDetails flow start " />
+        <set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID  Variable" doc:id="01564251-1f0a-4d71-a9c3-ca8f806118ef" variableName="EmployeeID" />
+		<set-payload value="#[p('db.Delete.EmergencyDetails')  ++ &quot;'&quot; ++ (vars.EmployeeID) ++ &quot;'&quot;]" doc:name="Delete DB Query" doc:id="6a219a34-0b4c-42af-8403-82ba189137a0" />
+		<flow-ref doc:name="Delete Database" doc:id="2e14589d-e440-4e88-934d-5b322595f41e" name="delete_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User Delete successfully"&#10;} as Object {encoding: "UTF-8", mediaType: "application/json"}]' doc:name="Set Payload" doc:id="d5a3d285-f6e1-4fc5-8214-5873da8e8507" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="d338ce94-cffe-45ca-baa2-729fbf6807f9" message="Delete EmergencyDetails End Successfully " />
+    </flow>
+    <flow name="delete:\user-profile\workInformation\(EmployeeID):user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="2efd09bc-b10b-4f70-b130-2f020d339335" message="Delete WorkInformation flow start " />
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID  Variable" doc:id="2705be54-062b-464d-979a-b3bd319574e5" variableName="EmployeeID" />
+		<set-payload value="#[p('db.Delete.WorkInformation')  ++ &quot;'&quot; ++ (vars.EmployeeID) ++ &quot;'&quot;]" doc:name="Delete DB Query" doc:id="ce98c912-259e-4916-8e43-b32dccad33da" />
+		<flow-ref doc:name="Delete Database" doc:id="4cdfb189-ff37-47ee-afcf-b960e3e64678" name="delete_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User Delete successfully"&#10;} as Object {encoding: "UTF-8", mediaType: "application/json"}]' doc:name="Set Payload" doc:id="36144678-330d-456f-8f60-a98bf6a77ac8" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="ba46e8cf-2368-468d-b5fc-56baf37c0d06" message="Delete WorkInformation End Successfully " />
+    </flow>
+    <flow name="delete:\user-profile\personalDetails\(EmployeeID):user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="ee49fe61-e6b7-4444-8ea2-3734db22b646" message="Delete PersonalDetails flow start " />
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID  Variable" doc:id="e4be02d7-b0d5-40bb-a10e-58a5ec69e4b7" variableName="EmployeeID" />
+		<set-payload value="#[p('db.Delete.PersonalDetails')  ++ &quot;'&quot; ++ (vars.EmployeeID) ++ &quot;'&quot;]" doc:name="Delete DB Query" doc:id="945ce328-9f8f-4aa6-b1d4-db342c904a97" />
+		<flow-ref doc:name="Delete Database" doc:id="9973ac55-4455-4c79-a54a-5cd49ae53088" name="delete_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User Delete successfully"&#10;} as Object {encoding: "UTF-8", mediaType: "application/json"}]' doc:name="Set Payload" doc:id="092fabb3-4a27-46aa-b810-c7267fd1f098" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="6dc55072-129d-442f-9b79-5f2ff420345a" message="Delete PersonalDetails End Successfully " />
+    </flow>
+    <flow name="delete:\user-profile\supportingDocuments\(EmployeeID):user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="6be1f86e-d200-4bbc-92ee-672379993054" message="Delete SupportingDocuments flow start " />
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID  Variable" doc:id="bb35b418-8011-4853-8538-6f9541252fb5" variableName="EmployeeID" />
+		<set-payload value="#[p('db.Delete.SupportingDocuments')  ++ &quot;'&quot; ++ (vars.EmployeeID) ++ &quot;'&quot;]" doc:name="Delete DB Query" doc:id="f47892a2-ddf2-4440-9a40-37d4559da95b" />
+		<flow-ref doc:name="Delete Database" doc:id="7ef0ffe8-8cbb-493e-842c-fd28e973fe21" name="delete_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User Delete successfully"&#10;} as Object {encoding: "UTF-8", mediaType: "application/json"}]' doc:name="Set Payload" doc:id="2e02ad6d-3f69-4ca4-bf15-f25f94a12299" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="daca7ee8-cf5a-4e0b-943f-ab4265f4d6d0" message="Delete SupportingDocuments End Successfully " />
+    </flow>
+    <flow name="delete:\user-profile\payrollInformation\(EmployeeID):user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="2d79ccab-d29b-4d8d-ba0f-d0486bea4734" message="Delete PayrollInformation flow start " />
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID  Variable" doc:id="551a47e2-3a51-41f6-868e-94849ebf391b" variableName="EmployeeID" />
+		<set-payload value="#[p('db.Delete.PayrollInformation')  ++ &quot;'&quot; ++ (vars.EmployeeID) ++ &quot;'&quot;]" doc:name="Delete DB Query" doc:id="7fe9a0ca-b56a-493e-839e-db335c65523b" />
+		<flow-ref doc:name="Delete Database" doc:id="067797a5-15c4-4b4f-88cc-b65bdf5339b8" name="delete_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User Delete successfully"&#10;} as Object {encoding: "UTF-8", mediaType: "application/json"}]' doc:name="Set Payload" doc:id="f8ecb69a-1896-493c-947b-5a4f7a16219b" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="237d5893-59cc-4fcf-a8fb-6d561f8adf96" message="Delete PayrollInformation End Successfully " />
+    </flow>
+    <flow name="delete:\user-profile\professionalReferences\(EmployeeID):user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="e9668cdc-4f0f-4d5c-b4e9-af869cf0309c" message="Delete ProfessionalReferences flow start " />
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID  Variable" doc:id="dfe7d0cd-b060-46e7-828b-44d123d737ef" variableName="EmployeeID" />
+		<set-payload value="#[p('db.Delete.ProfessionalReferences')  ++ &quot;'&quot; ++ (vars.EmployeeID) ++ &quot;'&quot;]" doc:name="Delete DB Query" doc:id="1c6d23c6-ebeb-48a2-ab0a-bfca0d439852" />
+		<flow-ref doc:name="Delete Database" doc:id="da390f40-d459-4e58-9ff1-c1ce867f2f10" name="delete_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User Delete successfully"&#10;} as Object {encoding: "UTF-8", mediaType: "application/json"}]' doc:name="Set Payload" doc:id="7ff62244-2cd0-4701-b499-b6e6210e0a02" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="2e19a227-8e02-4f1b-8652-206dcd9db8cd" message="Delete ProfessionalReferences End Successfully " />
+    </flow>
+    <flow name="delete:\user-profile\identityInformation\(EmployeeID):user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="c1c92b29-5076-463e-8936-c96b9d329ff2" message="Delete IdentityInformation flow start " />
+		<set-variable value="#[attributes.uriParams.'EmployeeID']" doc:name="Employee ID  Variable" doc:id="1c2371a1-7028-4f09-ac69-a7fbea0adcbc" variableName="EmployeeID" />
+		<set-payload value="#[p('db.Delete.IdentityInformation')  ++ &quot;'&quot; ++ (vars.EmployeeID) ++ &quot;'&quot;]" doc:name="Delete DB Query" doc:id="3040ed95-7bc7-4e7d-b80b-6bff5c442e05" />
+		<flow-ref doc:name="Delete Database" doc:id="48f4ca2d-95de-4d4d-8830-e03360754d65" name="delete_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User Delete successfully"&#10;} as Object {encoding: "UTF-8", mediaType: "application/json"}]' doc:name="Set Payload" doc:id="ecbe6988-de90-43da-95ae-f2c3767e9e98" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="26723f69-9015-4b3b-bfea-7dc32e0ddab9" message="Delete IdentityInformation End Successfully " />
+    </flow>
+    <flow name="patch:\user-profile\workInformation\(EmployeeID):application\json:user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="262a5beb-50b2-4737-8176-75898e4c18d7" message="Update WorkInformation flow start " />
+		<set-variable doc:name="Employee ID  Variable" doc:id="4e356afe-9836-4fab-a455-29ba406b4ac3" variableName="EmployeeID" value="#[&quot;'&quot; ++ attributes.uriParams.'EmployeeID' ++ &quot;'&quot;]"/>
+		<set-payload value="#[%dw 2.0&#10;output application/java&#10;fun addFieldValue(key, value) =&#10;    if (value != null) key ++ &quot;='&quot; ++ value ++ &quot;'&quot; else &quot;&quot;&#10;---&#10;&quot;UPDATE &quot; ++ '&quot;WorkInformation&quot;' ++ &quot; SET &quot; ++ (&#10;    [&#10;        addFieldValue('&quot;Age&quot;', payload.Age),&#10;        addFieldValue('&quot;WorkPhoneNumber&quot;', payload.WorkPhoneNumber),&#10;        addFieldValue('&quot;NickName&quot;', payload.NickName),&#10;        addFieldValue('&quot;imaEmploymentTypege&quot;', payload.EmploymentType),&#10;        addFieldValue('&quot;EmployeeStatus&quot;', payload.EmployeeStatus),&#10;        addFieldValue('&quot;SourceOfHire&quot;', payload.SourceOfHire),&#10;        addFieldValue('&quot;Role&quot;', payload.Role)&#10;    ] filter ($ != &quot;&quot;) joinBy &quot;, &quot;&#10;)++ &quot; WHERE &quot; ++ '&quot;EmployeeID&quot;' ++ &quot;= &quot;  ++ (vars.EmployeeID)]" doc:name="Update DB query" doc:id="080bfe0f-280c-4f83-872a-0d8b45fbd818" />
+		<flow-ref doc:name="Update Databse" doc:id="2fa82163-a641-47ed-8281-d04320621da9" name="update_database_subFlow"/>
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User update successfully"&#10;} as Object {encoding: "UTF-8", mediaType: "application/json"}]' doc:name="Set Payload" doc:id="0b323285-b80f-48e2-a8a6-20a66ab41625" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="385a6a80-4853-4965-b443-56c87ab6ee9c" message="Update HierarchyInformation End Successfully " />
+    </flow>
+    <flow name="patch:\user-profile\payrollInformation\(EmployeeID):application\json:user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="40d56485-bcd5-4382-821b-a9aa37fc5a36" message="Update PayrollInformation flow start " />
+		<set-variable value="#[&quot;'&quot; ++ attributes.uriParams.'EmployeeID' ++ &quot;'&quot;]" doc:name="Employee ID  Variable" doc:id="99836830-dfbb-43b1-9c1e-c3af6ea251ba" variableName="EmployeeID" />
+		<set-payload value="#[%dw 2.0&#10;output application/java&#10;fun addFieldValue(key, value) =&#10;    if (value != null) key ++ &quot;='&quot; ++ value ++ &quot;'&quot; else &quot;&quot;&#10;---&#10;&quot;UPDATE &quot; ++ '&quot;PayrollInformation&quot;' ++ &quot; SET &quot; ++ (&#10;    [&#10;        addFieldValue('&quot;FirstName&quot;', payload.FirstName),&#10;        addFieldValue('&quot;LastName&quot;', payload.LastName),&#10;        addFieldValue('&quot;Department&quot;', payload.Department),&#10;        addFieldValue('&quot;Designation&quot;', payload.Designation),&#10;        addFieldValue('&quot;Competency&quot;', payload.Competency),&#10;        addFieldValue('&quot;DateOfBirth&quot;', payload.DateOfBirth),&#10;        addFieldValue('&quot;Gender&quot;', payload.Gender),&#10;        addFieldValue('&quot;PersonalEmailAddress&quot;', payload.PersonalEmailAddress),&#10;        addFieldValue('&quot;FathersName&quot;', payload.FathersName),&#10;        addFieldValue('&quot;Pincode&quot;', payload.Pincode),&#10;        addFieldValue('&quot;MiddleName&quot;', payload.MiddleName),&#10;        addFieldValue('&quot;EmailAddress&quot;', payload.EmailAddress),&#10;        addFieldValue('&quot;Location&quot;', payload.Location),&#10;        addFieldValue('&quot;DateOfJoining&quot;', payload.DateOfJoining),&#10;        addFieldValue('&quot;PAN&quot;', payload.PAN),&#10;        addFieldValue('&quot;AddressLine1&quot;', payload.AddressLine1),&#10;        addFieldValue('&quot;AddressLine2&quot;', payload.AddressLine2),&#10;        addFieldValue('&quot;City&quot;', payload.City),&#10;        addFieldValue('&quot;AccountHoldersName&quot;', payload.AccountHoldersName),&#10;        addFieldValue('&quot;AccountNumber&quot;', payload.AccountNumber),&#10;        addFieldValue('&quot;PaymentMode&quot;', payload.PaymentMode),&#10;        addFieldValue('&quot;IFSCCode&quot;', payload.IFSCCode),&#10;        addFieldValue('&quot;PersonalMobileNumber&quot;', payload.PersonalMobileNumber)&#10;&#10;    ] filter ($ != &quot;&quot;) joinBy &quot;, &quot;&#10;)++ &quot; WHERE &quot; ++ '&quot;EmployeeID&quot;' ++ &quot;= &quot; ++ (vars.EmployeeID)]" doc:name="Update DB Query" doc:id="3292fbfc-29b4-4846-9777-b0f4b677901f" />
+		<flow-ref doc:name="Update Databse" doc:id="000b7ad6-8ae4-475b-b6b2-846ebc0bd42f" name="update_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User update successfully"&#10;} as Object {encoding: "UTF-8", mediaType: "application/json"}]' doc:name="Set Payload" doc:id="973f0d31-7ae3-411d-8f37-29b2d7fa6857" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="53b8b2a4-c1ae-4b99-b8a7-8c9ac2b95b3a" message="Update PayrollInformation End Successfully " />
+    </flow>
+    <flow name="patch:\user-profile\personalDetails\(EmployeeID):application\json:user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="abb42e44-f669-40ff-be76-b6dfb9149b17" message="Update PersonalDetails flow start " />
+		<set-variable value="#[&quot;'&quot; ++ attributes.uriParams.'EmployeeID' ++ &quot;'&quot;]" doc:name="Employee ID  Variable" doc:id="db49a305-28d2-47dd-8b8a-068580390250" variableName="EmployeeID" />
+		<set-payload value="#[%dw 2.0&#10;output application/java&#10;fun addFieldValue(key, value) =&#10;    if (value != null) key ++ &quot;='&quot; ++ value ++ &quot;'&quot; else &quot;&quot;&#10;---&#10;&quot;UPDATE &quot; ++ '&quot;PersonalDetails&quot;' ++ &quot; SET &quot; ++ (&#10;    [&#10;        addFieldValue('&quot;MaritalStatus&quot;', payload.MaritalStatus),&#10;        addFieldValue('&quot;AboutMe&quot;', payload.AboutMe),&#10;        addFieldValue('&quot;Citizenship&quot;', payload.Citizenship),&#10;        addFieldValue('&quot;BloodGroup&quot;', payload.BloodGroup),&#10;        addFieldValue('&quot;Ask_me_about&quot;', payload.&quot;Ask_me_about/Expertise&quot;) &#10;    ] filter ($ != &quot;&quot;) joinBy &quot;, &quot;&#10;)++ &quot; WHERE &quot; ++ '&quot;EmployeeID&quot;' ++ &quot;= &quot; ++ (vars.EmployeeID)]" doc:name="Update DB Query" doc:id="882e2be1-15e9-4715-9289-275b813998d3" />
+		<flow-ref doc:name="Update Databse" doc:id="5d07414e-2749-43e7-8371-fed9d5db12ce" name="update_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User update successfully"&#10;} as Object {encoding: "UTF-8", mediaType: "application/json"}]' doc:name="Set Payload" doc:id="67955f3a-0a87-44a3-8bf7-362118a6def0" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="14f64221-80d2-4fc6-af9f-a5af5a9f19cf" message="Update PersonalDetails End Successfully " />
+    </flow>
+    <flow name="patch:\user-profile\professionalReferences\(EmployeeID):application\json:user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="964a953e-15e3-474a-9e89-6f1a5b3a95d2" message="Update ProfessionalReferences flow start " />
+		<set-variable value="#[&quot;'&quot; ++ attributes.uriParams.'EmployeeID' ++ &quot;'&quot;]" doc:name="Employee ID  Variable" doc:id="a18f5ce8-956c-440c-8a12-8f857fa824d0" variableName="EmployeeID" />
+		<set-payload value="#[%dw 2.0&#10;output application/java&#10;fun addFieldValue(key, value) =&#10;    if (value != null) key ++ &quot;='&quot; ++ value ++ &quot;'&quot; else &quot;&quot;&#10;---&#10;&quot;UPDATE &quot; ++ '&quot;ProfessionalReferences&quot;' ++ &quot; SET &quot; ++ (&#10;    [&#10;        addFieldValue('&quot;Name&quot;', payload.Name),&#10;        addFieldValue('&quot;EmailID&quot;', payload.EmailID),&#10;        addFieldValue('&quot;PhoneNumber&quot;', payload.PhoneNumber),&#10;        addFieldValue('&quot;CurrentCompany&quot;', payload.CurrentCompany) &#10;    ] filter ($ != &quot;&quot;) joinBy &quot;, &quot;&#10;)++ &quot; WHERE &quot; ++ '&quot;EmployeeID&quot;' ++ &quot;= &quot; ++ (vars.EmployeeID)]" doc:name="Update DB Query" doc:id="ffc79dd2-6537-47e7-ae93-2981875c3dd0" />
+		<flow-ref doc:name="Update Databse" doc:id="35a0d4d5-4d0a-47d1-a85c-24c7b8e59348" name="update_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User update successfully"&#10;} as Object {encoding: "UTF-8", mediaType: "application/json"}]' doc:name="Set Payload" doc:id="e7b7dbf9-fdf3-47aa-a01b-a6bb6fa528fd" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="bbce7343-9c34-45fa-934e-78fa6238beb7" message="Update ProfessionalReferences End Successfully " />
+    </flow>
+    <flow name="patch:\user-profile\supportingDocuments\(EmployeeID):application\json:user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="039c7715-456a-4d0f-859c-188b0ae57098" message="Update SupportingDocuments flow start " />
+		<set-variable value="#[&quot;'&quot; ++ attributes.uriParams.'EmployeeID' ++ &quot;'&quot;]" doc:name="Employee ID  Variable" doc:id="85863d8c-1afc-4af2-b6fa-19fd8b8a21cd" variableName="EmployeeID" />
+		<set-payload value="#[%dw 2.0&#10;output application/java&#10;fun addFieldValue(key, value) =&#10;    if (value != null) key ++ &quot;='&quot; ++ value ++ &quot;'&quot; else &quot;&quot;&#10;---&#10;&quot;UPDATE &quot; ++ '&quot;SupportingDocuments&quot;' ++ &quot; SET &quot; ++ (&#10;    [&#10;        addFieldValue('&quot;SSLC_MarksheetCertificate&quot;', payload.SSLC_MarksheetCertificate),&#10;        addFieldValue('&quot;UG_DegreeCertificate&quot;', payload.UG_DegreeCertificate),&#10;        addFieldValue('&quot;Certificate1_Mulesoft&quot;', payload.Certificate1_Mulesoft),&#10;        addFieldValue('&quot;Certificate2_Mulesoft&quot;', payload.Certificate2_Mulesoft),&#10;        addFieldValue('&quot;Certificate3_Mulesoft&quot;', payload.&quot;Certificate3_Mulesoft&quot;),&#10;        addFieldValue('&quot;AadhaarCard&quot;', payload.AadhaarCard),&#10;        addFieldValue('&quot;BackgroundVerification1&quot;', payload.BackgroundVerification1),&#10;        addFieldValue('&quot;PreviousEmployerJoiningLetters&quot;', payload.PreviousEmployerJoiningLetters),&#10;        addFieldValue('&quot;OtherTechCertifications&quot;', payload.OtherTechCertifications),&#10;        addFieldValue('&quot;PreviousEmployerAppointmentOrders&quot;', payload.PreviousEmployerAppointmentOrders),&#10;        addFieldValue('&quot;PanCard&quot;', payload.PanCard),&#10;        addFieldValue('&quot;HSC_PUC_CertificateMarksheet&quot;', payload.HSC_PUC_CertificateMarksheet),&#10;        addFieldValue('&quot;PG_DegreeCertificate&quot;', payload.PG_DegreeCertificate),&#10;        addFieldValue('&quot;Last_3_Month_Payslips&quot;', payload.Last_3_Month_Payslips),&#10;        addFieldValue('&quot;PreviousEmployerRelievingLetter&quot;', payload.PreviousEmployerRelievingLetter),&#10;        addFieldValue('&quot;OfferLetter&quot;', payload.OfferLetter),&#10;        addFieldValue('&quot;Resume&quot;', payload.Resume)&#10;    ] filter ($ != &quot;&quot;) joinBy &quot;, &quot;&#10;)++ &quot; WHERE &quot; ++ '&quot;EmployeeID&quot;' ++ &quot;= &quot; ++ (vars.EmployeeID)]" doc:name="Update DB Query" doc:id="388f3503-6633-4ab5-a66a-4c590443892c" />
+		<flow-ref doc:name="Update Databse" doc:id="5e343587-857e-4c21-b4cf-f8c7f5e3881f" name="update_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User update successfully"&#10;} as Object {encoding: "UTF-8", mediaType: "application/json"}]' doc:name="Set Payload" doc:id="a4cb6002-6015-4e1f-90dc-3c26f0949eb4" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="02fa8dbf-0405-4cac-acf4-ee889e4a1b38" message="Update SupportingDocuments End Successfully " />
+    </flow>
+    <flow name="patch:\user-profile\profileImage\(EmployeeID):application\json:user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="13312c14-028a-45fd-bcaa-94c463f8e633" message="Update ProfileImage flow start " />
+		<set-variable value="#[&quot;'&quot; ++ attributes.uriParams.'EmployeeID' ++ &quot;'&quot;]" doc:name="Employee ID  Variable" doc:id="7db18e81-10b9-4e4c-bf45-5a0ce6918486" variableName="EmployeeID" />
+		<set-payload value="#[%dw 2.0&#10;output application/java&#10;&#10;---&#10;&quot;UPDATE &quot; ++ '&quot;profileImage&quot;' ++ &quot; SET &quot; ++(&#10;    if(payload.image != null) '&quot;image&quot;=' ++ &quot;'&quot; ++ payload.image ++&quot;'&quot; else &quot;&quot;&#10;) ++ &quot; WHERE &quot; ++ '&quot;EmployeeID&quot;' ++ &quot;= &quot; ++ (vars.EmployeeID)]" doc:name="Update DB Query" doc:id="09f3b17c-49af-4ccb-aa44-802a81865812" />
+		<flow-ref doc:name="Update Databse" doc:id="04ba5c31-a77e-4dfa-9f7a-bc49456eecc2" name="update_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User update successfully"&#10;} as Object {encoding: "UTF-8", mediaType: "application/json"}]' doc:name="Set Payload" doc:id="39069e02-43ca-4f36-8df0-4cd7894d3f1f" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="40feb126-cf4c-4d5e-9164-66116b1e4ce2" message="Update ProfileImage End Successfully " />
+    </flow>
+    <flow name="patch:\user-profile\identityInformation\(EmployeeID):application\json:user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="9492af2a-0dc4-468d-86a4-a638b54d02e5" message="Update IdentityInformation flow start " />
+		<set-variable value="#[&quot;'&quot; ++ attributes.uriParams.'EmployeeID' ++ &quot;'&quot;]" doc:name="Employee ID  Variable" doc:id="af6f09e7-b0c5-4e68-be2c-f9ec0fa4f9cf" variableName="EmployeeID" />
+		<set-payload value="#[%dw 2.0&#10;output application/java&#10;fun addFieldValue(key, value) =&#10;    if (value != null) key ++ &quot;='&quot; ++ value ++ &quot;'&quot; else &quot;&quot;&#10;---&#10;&quot;UPDATE &quot; ++ '&quot;IdentityInformation&quot;' ++ &quot; SET &quot; ++ (&#10;    [&#10;        addFieldValue('&quot;Aadhaar&quot;', payload.Aadhaar),&#10;        addFieldValue('&quot;PassportNumber&quot;', payload.PassportNumber),&#10;        addFieldValue('&quot;PassportValidUntil&quot;', payload.PassportValidUntil)&#10;    ] filter ($ != &quot;&quot;) joinBy &quot;, &quot;&#10;)++ &quot; WHERE &quot; ++ '&quot;EmployeeID&quot;' ++ &quot;= &quot;  ++ (vars.EmployeeID)]" doc:name="Update DB Query" doc:id="f399e358-8e52-446b-a17d-c505543670fe" />
+		<flow-ref doc:name="Update Databse" doc:id="195353e4-3992-421a-bc90-ea03df52eb8b" name="update_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User update successfully"&#10;} as Object {encoding: "UTF-8", mediaType: "application/json"}]' doc:name="Set Payload" doc:id="a54494de-f32a-474c-844d-9365d6413e75" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="5ce5042c-19b3-4c2d-b738-78290f45483a" message="Update IdentityInformation End Successfully " />
+    </flow>
+    <flow name="patch:\user-profile\hierarchyInformation\(EmployeeID):application\json:user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="53060319-012a-406a-a9b7-1ca7fd17ecf0" message="Update HierarchyInformation flow start " />
+		<set-variable value="#[&quot;'&quot; ++ attributes.uriParams.'EmployeeID' ++ &quot;'&quot;]" doc:name="Employee ID  Variable" doc:id="4abf53e4-6600-489c-943b-1a4ced5d414c" variableName="EmployeeID" />
+		<set-payload value="#[%dw 2.0&#10;output application/java&#10;&#10;---&#10;&quot;UPDATE &quot; ++ '&quot;HierarchyInformation&quot;' ++ &quot; SET &quot; ++(&#10;    if(payload.ReportingManager != null) '&quot;ReportingManager&quot;=' ++ &quot;'&quot; ++ payload.ReportingManager ++&quot;'&quot; else &quot;&quot;&#10;) ++ &quot; WHERE &quot; ++ '&quot;EmployeeID&quot;' ++ &quot;= &quot; ++ (vars.EmployeeID)]" doc:name="Update DB Query" doc:id="c3ac2db0-1d50-4526-a454-95c685e33c60" />
+		<flow-ref doc:name="Update Databse" doc:id="62b93f69-138f-45a8-a3e6-6915cc8c1a4f" name="update_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User update successfully"&#10;} as Object {encoding: "UTF-8", mediaType: "application/json"}]' doc:name="Set Payload" doc:id="2367fded-f215-461d-b2d9-773c49330531" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="6c833ab0-675e-49ec-ae60-dcaf7fef7b41" message="Update HierarchyInformation End Successfully " />
+    </flow>
+    <flow name="patch:\user-profile\emergencyDetails\(EmployeeID):application\json:user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="41d39db8-1ba6-41a6-9682-da270641f078" message="Update EmergencyDetails flow start " />
+		<set-variable value="#[&quot;'&quot; ++ attributes.uriParams.'EmployeeID' ++ &quot;'&quot;]" doc:name="Employee ID  Variable" doc:id="491f2bcb-ae84-4fa4-80e5-7513042eb770" variableName="EmployeeID" />
+		<set-payload value="#[%dw 2.0&#10;output application/java&#10;fun addFieldValue(key, value) =&#10;    if (value != null) key ++ &quot;='&quot; ++ value ++ &quot;'&quot; else &quot;&quot;&#10;---&#10;&quot;UPDATE &quot; ++ '&quot;EmergencyDetails&quot;' ++ &quot; SET &quot; ++ (&#10;    [&#10;        addFieldValue('&quot;Name&quot;', payload.Name),&#10;        addFieldValue('&quot;Relationship&quot;', payload.Relationship),&#10;        addFieldValue('&quot;EmailID&quot;', payload.EmailID),&#10;         addFieldValue('&quot;PhoneNumber&quot;', payload.PhoneNumber)&#10;    ] filter ($ != &quot;&quot;) joinBy &quot;, &quot;&#10;)++ &quot; WHERE &quot; ++ '&quot;EmployeeID&quot;' ++ &quot;= &quot;  ++ (vars.EmployeeID)]" doc:name="Update DB Query" doc:id="25b83338-b5ac-49ce-ad3a-1840f85481cc" />
+		<flow-ref doc:name="Update Databse" doc:id="31132e57-98de-47c5-bec9-4098db6a5c3b" name="update_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User update successfully"&#10;} as Object {encoding: "UTF-8", mediaType: "application/json"}]' doc:name="Set Payload" doc:id="7a02218d-eb5c-4502-a330-971a2c3fde28" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="4ae815dc-4d2b-49b6-829f-fbbfb8adf756" message="Update EmergencyDetails End Successfully " />
+    </flow>
+    <flow name="get:\user-profile\emergencyDetails:user_profile-sapi-config">
+		<logger level="INFO" doc:name="Initial logger" doc:id="bb9442f6-c9db-4c19-b383-cd1426b55e8f" message="Get EmergencyDetails start flow" />
+		<set-payload value="#[p('db.get.EmergencyDetails')]" doc:name="Select DB query" doc:id="be56c556-9d14-4f0f-8fd6-530b3ac0b87d" />
+		<flow-ref doc:name="Select database" doc:id="4c58906f-2177-488c-9bbc-b07c41674eae" name="database_subFlow"/>
+		<logger level="INFO" doc:name="Final Logger" doc:id="68ecddb5-9686-4e46-9d47-5602d05fcb37" message="Get HierarchyInformation End Successfully " />
+    </flow>
+    <flow name="get:\user-profile\hierarchyInformation:user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="0ca325d2-8e92-40cc-a171-90ca7063f08b" message="Get HierarchyInformation start flow"/>
+		<set-payload value="#[p('db.get.HierarchyInformation')]" doc:name="Select DB Query" doc:id="2ec7fa5f-f6b4-42ee-84ef-da1cb13c807e" />
+		<flow-ref doc:name="Select database" doc:id="80af053b-ed00-41fc-8b52-b8e9c4902880" name="database_subFlow"/>
+		<logger level="INFO" doc:name="Final Logger" doc:id="589a20a8-1788-437b-a6cf-7a4d85b569bd" message="Get HierarchyInformation End Successfully"/>
+    </flow>
+    <flow name="get:\user-profile\identityInformation:user_profile-sapi-config">
+		<logger level="INFO" doc:name="Initial logger" doc:id="262eef40-2f9e-4bed-b028-a2985c6416f3" message="Get IdentityInformation start flow" />
+		<set-payload value="#[p('db.get.IdentityInformation')]" doc:name="Select DB Query" doc:id="1ea60ecb-10b9-4202-99f0-a3e9d52eaf02" />
+		<flow-ref doc:name="Select database" doc:id="0496c046-f309-4a15-9038-3530dcad7c81" name="database_subFlow" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="c2f88ae3-ff3e-4b0b-a49c-f690ae456b7a" message="Get IdentityInformation End Successfully" />
+    </flow>
+    <flow name="get:\user-profile\payrollInformation:user_profile-sapi-config">
+		<logger level="INFO" doc:name="Initial logger" doc:id="61ed47c2-b6fe-47f8-a118-01cc5c150691" message="Get PayrollInformation start flow" />
+		<set-payload value="#[p('db.get.PayrollInformation')]" doc:name="Select DB Query" doc:id="bb7d8359-f443-4a50-a863-47a0902b4065" />
+		<flow-ref doc:name="Select database" doc:id="0b32eaeb-7d02-4367-a82b-80b4abc75219" name="database_subFlow" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="af8820b2-e45a-4751-9f1b-7c09f8d789bb" message="Get PayrollInformation End Successfully" />
+    </flow>
+    <flow name="get:\user-profile\personalDetails:user_profile-sapi-config">
+		<logger level="INFO" doc:name="Initial logger" doc:id="5d4fcdeb-8a03-447a-952f-ae0a4d380e06" message="Get PersonalDetails start flow" />
+		<set-payload value="#[p('db.get.PersonalDetails')]" doc:name="Select DB Query" doc:id="17dbe3b5-c298-4065-a2f5-a57b42f93c9a" />
+		<flow-ref doc:name="Select database" doc:id="8150fe8a-b8f6-44ce-8a97-23bb5251b718" name="database_subFlow" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="575d9e3a-4a6b-4d37-b393-587aa9d0cd4a" message="Get PersonalDetails End Successfully" />
+    </flow>
+    <flow name="get:\user-profile\professionalReferences:user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="9ba9ef5c-514e-434c-825b-604cdd9b6562" message="Get ProfessionalReferences start flow" />
+		<set-payload value="#[p('db.get.ProfessionalReferences')]" doc:name="Select DB Query" doc:id="947a7c55-0947-4c18-8a47-9b8cb34bb7e6" />
+		<flow-ref doc:name="Select database" doc:id="e94eb98d-65b0-4185-9cd5-46cd5807a09b" name="database_subFlow" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="466e9d30-adc3-464f-b97d-1b22e3c6ed1e" message="Get ProfessionalReferences End Successfully" />
+    </flow>
+    <flow name="get:\user-profile\profileImage:user_profile-sapi-config">
+		<logger level="INFO" doc:name="Initial logger" doc:id="85c345c5-2546-4ca5-ab70-4d28fec29f53" message="Get ProfileImage start flow" />
+		<set-payload value="#[p('db.get.ProfileImage')]" doc:name="Select DB Query" doc:id="8cfbca63-7a61-4203-a20c-5f0e913d7d60" />
+		<flow-ref doc:name="Select database" doc:id="96916b03-105b-46e5-b227-e899b793371e" name="database_subFlow" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="fe9369b9-2437-40c0-9a38-53be6d6b34d3" message="Get ProfileImage End Successfully" />
+    </flow>
+    <flow name="get:\user-profile\supportingDocuments:user_profile-sapi-config">
+		<logger level="INFO" doc:name="Initial logger" doc:id="4a20582b-b034-4dd4-b275-9c03050f8025" message="Get SupportingDocuments start flow" />
+		<set-payload value="#[p('db.get.SupportingDocuments')]" doc:name="Select DB Query" doc:id="28a37acf-3b44-41fa-ae94-ad016d3251bd" />
+		<flow-ref doc:name="Select database" doc:id="7ca665c3-ff8a-4b40-a2c0-940f52daaa9d" name="database_subFlow" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="9441b7b2-b4a4-441c-8c15-29bef1a7296d" message="Get SupportingDocuments End Successfully" />
+    </flow>
+    <flow name="get:\user-profile\workInformation:user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="8e324e0a-3a1c-4352-8b7f-7a77ad6121c1" message="Get WorkInformation start flow" />
+		<set-payload value="#[p('db.get.WorkInformation')]" doc:name="Select DB Query" doc:id="3f5f2c8f-a181-4cb5-8b29-c30872adb41b" />
+		<flow-ref doc:name="Select database" doc:id="ba072c37-95ff-41d1-a174-db5399f35a01" name="database_subFlow" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="6407adef-b6dd-412a-89d8-fed810997b73" message="Get WorkInformation End Successfully" />
+    </flow>
+    <flow name="get:\user-profile\profileImage\(EmployeeID):user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="82a12d9d-d11a-4f1a-a485-5959322ac9ce" message="Get profileImage start flow" />
+		<set-variable value="#[ttributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="a5e83e9d-708b-4c04-a765-505a69709e84" variableName="EmployeeID"/>
+		<set-payload value="#[p('db.get.ProfileImage_emp') ++ &quot;'&quot; ++ (vars.EmployeeID) ++ &quot;'&quot;]" doc:name="Select DB Query" doc:id="7329c1a6-cdc9-437d-adf6-ff9538483b9b" />
+		<flow-ref doc:name="Select database" doc:id="d3d1b20a-dd65-4628-b9bb-a2641945de3e" name="database_subFlow" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="47674b38-dff0-475e-8a5e-d99dd08941e0" message="Get profileImage End Successfully" />
+    </flow>
+    <flow name="get:\user-profile\hierarchyInformation\(EmployeeID):user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="81f37f60-e836-45be-9cff-b62a1a8fca1e" message="Get HierarchyInformation start flow" />
+		<set-variable value="#[ttributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="7c6d0296-e7f1-43a8-a8bb-8f067800e8db" variableName="EmployeeID" />
+		<set-payload value="#[p('db.get.HierarchyInformation_emp') ++ &quot;'&quot; ++ (vars.EmployeeID) ++ &quot;'&quot;]" doc:name="Select DB Query" doc:id="df43cd9e-661f-43c9-8d6f-c9c2101423a8" />
+		<flow-ref doc:name="Select database" doc:id="7bd06332-21c3-46d8-b073-02521da6cc50" name="database_subFlow" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="5faf93a8-dd44-4fa7-86ef-945d8a103fa2" message="Get HierarchyInformation End Successfully" />
+    </flow>
+    <flow name="get:\user-profile\identityInformation\(EmployeeID):user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="43fabbda-2222-413d-8ff9-8e685da56519" message="Get IdentityInformation start flow" />
+		<set-variable value="#[ttributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="84d9e40e-8ace-456d-b30b-0122b7fe724c" variableName="EmployeeID" />
+		<set-payload value="#[p('db.get.IdentityInformation_emp') ++ &quot;'&quot; ++ (vars.EmployeeID) ++ &quot;'&quot;]" doc:name="Select DB Query" doc:id="76896c47-bf40-411e-b9d4-0cfc68d10f51" />
+		<flow-ref doc:name="Select database" doc:id="568bf5ba-aacc-4f57-8258-777b55e2c51a" name="database_subFlow" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="d8ef0c19-8b4a-4c4d-a190-d542ac5800f5" message="Get IdentityInformation End Successfully" />
+    </flow>
+    <flow name="get:\user-profile\payrollInformation\(EmployeeID):user_profile-sapi-config">
+		<logger level="INFO" doc:name="Initial logger" doc:id="975c6c00-c299-4cec-9160-e989c2c8beb5" message="Get PayrollInformation  start flow" />
+        <set-variable value="#[ttributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="c830b3cd-1da5-4312-bb48-1ec6e8c1a7a8" variableName="EmployeeID" />
+		<set-payload value="#[p('db.get.PayrollInformation_emp') ++ &quot;'&quot; ++ (vars.EmployeeID) ++ &quot;'&quot;]" doc:name="Select DB Query" doc:id="00107978-d38c-459e-9282-97234de04650" />
+		<flow-ref doc:name="Select database" doc:id="79de9af2-e169-4fa4-99cf-11b64e0836ab" name="database_subFlow" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="7ce0e47e-0941-48bf-ac91-082cdcc8bacb" message="Get PayrollInformation End Successfully" />
+    </flow>
+    <flow name="get:\user-profile\professionalReferences\(EmployeeID):user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="d1cb7e41-4edc-440e-bacb-68a89518ae8c" message="Get ProfessionalReferences start flow" />
+		<set-variable value="#[ttributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="845e5412-d793-4e27-af34-106d7a2f6408" variableName="EmployeeID" />
+		<set-payload value="#[p('db.get.ProfessionalReferences_emp') ++ &quot;'&quot; ++ (vars.EmployeeID) ++ &quot;'&quot;]" doc:name="Select DB Query" doc:id="c4fcc99f-8217-411c-92c7-e054b1871f26" />
+		<flow-ref doc:name="Select database" doc:id="7e2341fd-4931-4ca7-9ee7-d633d652c248" name="database_subFlow" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="d348d420-e442-4abf-b53f-c4155b19bc1b" message="Get ProfessionalReferences End Successfully" />
+    </flow>
+    <flow name="get:\user-profile\workInformation\(EmployeeID):user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="d186e95e-4929-4731-92de-d0de5bd191a2" message="Get WorkInformation start flow" />
+		<set-variable value="#[ttributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="dc6e7d48-135d-4888-8b66-cb354882cd70" variableName="EmployeeID" />
+		<set-payload value="#[p('db.get.WorkInformation_emp') ++&quot;'&quot;++ vars.EmployeeID ++&quot;'&quot;]" doc:name="Select DB Query" doc:id="f7fab0b7-b6ef-4f2f-92ee-6ab71d0bb8a3" />
+		<flow-ref doc:name="Select database" doc:id="03343ed1-be69-4629-8b3f-5a2f6becc297" name="database_subFlow" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="5944f1d2-c99a-47e9-ba61-57778bfbce30" message="Get WorkInformation  End Successfully" />
+    </flow>
+    <flow name="get:\user-profile\emergencyDetails\(EmployeeID):user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="ad584285-fa60-4135-bbb5-94e40c0db5b6" message="Get EmergencyDetails  start flow" />
+		<set-variable value="#[ttributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="e7f3cd8b-adbb-423e-aafc-f95b3ca89fba" variableName="EmployeeID" />
+		<set-payload value="#[p('db.get.EmergencyDetails_emp') ++ &quot;'&quot; ++ (vars.EmployeeID) ++ &quot;'&quot;]" doc:name="Select DB Query" doc:id="33edb7ae-77dd-4a6a-bcb7-f74ce0eb88c3" />
+		<flow-ref doc:name="Select database" doc:id="088fbc0f-ad5a-48d8-913d-279d07718059" name="database_subFlow" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="d9ad3fe8-eafb-4c86-9656-6c38cc494aa8" message="Get EmergencyDetails  End Successfully" />
+    </flow>
+    <flow name="get:\user-profile\personalDetails\(EmployeeID):user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="96205c8e-20bb-4e5e-af47-415a324acd96" message="Get PersonalDetails   start flow" />
+        <set-variable value="#[ttributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="c3a97b7d-575c-4674-9cf8-3861cdd60e67" variableName="EmployeeID" />
+		<set-payload value="#[p('db.get.PersonalDetails_emp') ++ &quot;'&quot; ++ (vars.EmployeeID) ++ &quot;'&quot;]" doc:name="Select DB Query" doc:id="06f971dd-4851-4eaa-8775-123faee56267" />
+		<flow-ref doc:name="Select database" doc:id="cfd8396a-e835-45b2-81b7-39cc3c76eb11" name="database_subFlow" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="baba33bc-f318-44a7-839a-11638028c601" message="Get PersonalDetails   End Successfully" />
+    </flow>
+    <flow name="get:\user-profile\supportingDocuments\(EmployeeID):user_profile-sapi-config">
+		<logger level="INFO" doc:name="Initial logger" doc:id="cb5ac9a1-30e8-4eaa-90c8-9387021697a5" message="Get SupportingDocuments start flow" />
+		<set-variable value="#[ttributes.uriParams.'EmployeeID']" doc:name="Employee ID Variable" doc:id="19ae822c-bf8d-4ed2-aee2-cd0351bcd689" variableName="EmployeeID" />
+		<set-payload value="#[p('db.get.SupportingDocuments_emp') ++ &quot;'&quot; ++ (vars.EmployeeID) ++ &quot;'&quot;]" doc:name="Select DB Query" doc:id="b435af6b-2266-4d90-b6af-0dc5d4de775a" />
+		<flow-ref doc:name="Select database" doc:id="cd19efa0-eda0-4036-9f16-ee57b150c7ac" name="database_subFlow" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="c064c532-d5a4-4211-9c3d-d5fa7e68200e" message="Get SupportingDocuments  End Successfully" />
+    </flow>
+    <flow name="post:\user-profile\emergencyDetails:application\json:user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="fb43df05-e595-45a7-8e2f-bbfcef41ce1e" message="post EmergencyDetails start flow" />
+		<set-variable value='#[{&#10;        "Name": payload.Name,&#10;        "PhoneNumber": payload.PhoneNumber,&#10;        "EmailID": payload.EmailID,&#10;        "Relationship": payload.Relationship,&#10;        "EmployeeID": payload.EmployeeID&#10; }]' doc:name="Insert Variable" doc:id="94448732-7701-4b28-8c0d-75271ee4841b" variableName="Insert" />
+		<set-payload value="#[p('db.post.EmergencyDetails')]" doc:name="Insert DB Query" doc:id="56175af1-0452-4729-bcfa-fa92cce60247" />
+		<flow-ref doc:name="Insert database" doc:id="53df4297-7ddb-4bd0-8b0d-e72dfba50df3" name="insert_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User created successfully"&#10;}]' doc:name="Set Payload" doc:id="fa46b295-5aef-4874-999d-724bb164f3b1" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="1f0ddb1f-8255-460c-bc82-f1cd8bf7151c" message="Post EmergencyDetails End Successfully" />
+    </flow>
+    <flow name="post:\user-profile\hierarchyInformation:application\json:user_profile-sapi-config">
+		<logger level="INFO" doc:name="Initial logger" doc:id="4225a467-0897-4c8d-bcf6-bfcb9023f612" message="Post HierarchyInformation start flow" />
+		<set-variable value='#[{&#10;  "EmployeeID": payload.EmployeeID,&#10;  "ReportingManager": payload.ReportingManager&#10;}]' doc:name="Insert Variable" doc:id="84827959-6678-4229-ad81-70ed347cbe45" variableName="Insert" />
+		<set-payload value="#[p('db.post.HierarchyInformation')]" doc:name="Insert DB Query" doc:id="4a913c32-57f2-40cf-90e7-018d944e1ba6" />
+		<flow-ref doc:name="Insert database" doc:id="16c22914-9407-4cfe-92a5-ff7b09a8b38d" name="insert_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User created successfully"&#10;}]' doc:name="Set Payload" doc:id="ff93999f-0030-4d56-9838-a2cb89f4d911" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="690cfe95-5460-452e-948c-c3f8bccb68e6" message="Post HierarchyInformation End Successfully" />
+    </flow>
+    <flow name="post:\user-profile\identityInformation:application\json:user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="c5f31da6-d7de-4266-8a6b-13f78f1aa3a6" message="Post IdentityInformation start flow" />
+		<set-variable value='#[{&#10;  "EmployeeID": payload.EmployeeID,&#10;  "Aadhaar": payload.Aadhaar,&#10;  "PassportNumber": payload.PassportNumber,&#10;  "PassportValidUntil": payload.PassportValidUntil&#10;}]' doc:name="Insert Variable" doc:id="be7a2d64-aaea-44b2-a0e3-244fcde2f4e6" variableName="Insert" />
+		<set-payload value="#[p('db.post.IdentityInformation')]" doc:name="Insert DB Query" doc:id="f3155a92-d32e-409c-8daf-5e288d5854b6" />
+		<flow-ref doc:name="Insert database" doc:id="1551f2db-5fe1-4714-ba98-3854ff39fbc3" name="insert_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User created successfully"&#10;}]' doc:name="Set Payload" doc:id="3193dd7c-9cc5-4129-918c-8f8e5f0a9ac8" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="df10dc34-bc91-437b-9d21-4aa5e82c99be" message="Post IdentityInformation End Successfully" />
+    </flow>
+    <flow name="post:\user-profile\payrollInformation:application\json:user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="8508049a-da7f-42fd-84ed-a8a5985b7e99" message="Post PayrollInformation start flow" />
+		<set-variable value='#[{&#10;  "EmployeeID": payload.EmployeeID,&#10;  "FirstName": payload.FirstName,&#10;  "LastName": payload.LastName,&#10;  "Department": payload.Department,&#10;  "Designation": payload.Designation,&#10;  "Competency":payload.Competency,&#10;  "DateOfBirth": payload.DateOfBirth,&#10;  "Gender": payload.Gender,&#10;  "PersonalEmailAddress": payload.PersonalEmailAddress,&#10;  "FathersName": payload.FathersName,&#10;  "Pincode": payload.Pincode,&#10;  "MiddleName": payload.MiddleName,&#10;  "EmailAddress": payload.EmailAddress,&#10;  "Location": payload.Location,&#10;  "DateOfJoining": payload.DateOfJoining,&#10;  "PAN": payload.PAN,&#10;  "AddressLine1": payload.AddressLine1,&#10;  "AddressLine2": payload.AddressLine2,&#10;  "City": payload.City,&#10;  "AccountHoldersName": payload.AccountHoldersName,&#10;  "AccountNumber": payload.AccountNumber,&#10;  "PaymentMode": payload.PaymentMode,&#10;  "IFSCCode": payload.IFSCCode,&#10;  "PersonalMobileNumber": payload.PersonalMobileNumber&#10;}]' doc:name="Insert Variable" doc:id="3e47beb4-ba2a-4812-97f3-f5e655aa068f" variableName="Insert" />
+		<set-payload value="#[p('db.post.PayrollInformation')]" doc:name="Insert DB Query" doc:id="3873080f-b118-4ed4-b980-5208a31d7570" />
+		<flow-ref doc:name="Insert database" doc:id="ed227ca1-ac13-4495-9ae6-c7a96a481942" name="insert_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User created successfully"&#10;}]' doc:name="Set Payload" doc:id="dc9f58cd-62e1-4921-87e6-121f00c64df8" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="a0c25d07-66b4-4ed8-bd0d-38a2f399f9b6" message="Post PayrollInformation End Successfully" />
+    </flow>
+    <flow name="post:\user-profile\personalDetails:application\json:user_profile-sapi-config">
+        <logger level="INFO" doc:name="Initial logger" doc:id="22b418b7-312b-4ce7-88ff-d6c624f0c500" message="Post PersonalDetails start flow" />
+		<set-variable value='#[{&#10;  "EmployeeID": payload.EmployeeID,&#10;  "MaritalStatus": payload.MaritalStatus,&#10;  "AboutMe": payload.Citizenship ,&#10;  "Citizenship": payload.Citizenship,&#10;  "BloodGroup": payload.BloodGroup,&#10;  "Ask_me_about": payload."Ask_me_about/Expertise"&#10;}]' doc:name="Insert Variable" doc:id="c34c9828-c2e5-49d2-b287-6a9f8262df34" variableName="Insert" />
+		<set-payload value="#[p('db.post.PersonalDetails')]" doc:name="Insert DB Query" doc:id="19e2aec7-1d96-4431-ae2e-0083c900bfc4" />
+		<flow-ref doc:name="Insert database" doc:id="59ef130d-3f32-4832-b947-0d012636ee71" name="insert_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User created successfully"&#10;}]' doc:name="Set Payload" doc:id="95bda297-7fe7-432c-882e-b150cafc28ee" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="bfb2d4ff-2e01-4ea6-8f43-c3facb685efc" message="Post PersonalDetails End Successfully" />
+    </flow>
+    <flow name="post:\user-profile\professionalReferences:application\json:user_profile-sapi-config">
+		<logger level="INFO" doc:name="Initial logger" doc:id="ec838bbb-1634-4226-9a47-72af09ee7927" message="Post ProfessionalReferences start flow" />
+		<set-variable value='#[{&#10;  "EmployeeID": payload.EmployeeID,&#10;  "Name": payload.Name,&#10;  "EmailID": payload.EmailID,&#10;  "PhoneNumber": payload.PhoneNumber,&#10;  "CurrentCompany": payload.CurrentCompany&#10;}]' doc:name="Insert Variable" doc:id="60e2f91d-dbe8-4c37-aa23-d66a46f1894c" variableName="Insert" />
+		<set-payload value="#[p('db.post.ProfessionalReferences')]" doc:name="Insert DB Query" doc:id="ee5f7fc3-c2d2-4352-83dc-63b76033720e" />
+		<flow-ref doc:name="Insert database" doc:id="eaf551db-3b90-44be-90f6-647a172bcb0a" name="insert_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User created successfully"&#10;}]' doc:name="Set Payload" doc:id="33ee86c4-e7ea-4a2a-81d0-146a687aa0fd" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="23478579-7e34-48c4-ab2f-0ed6d9fe27a7" message="Post ProfessionalReferences End Successfully" />
+    </flow>
+    <flow name="post:\user-profile\profileImage:application\json:user_profile-sapi-config">
+		<logger level="INFO" doc:name="Initial logger" doc:id="f407c7cd-08be-4807-bbd3-215c42506dca" message="Post ProfileImage start flow" />
+		<set-variable value='#[{&#10;  "EmployeeID": payload.EmployeeID,&#10;  "image": payload.image&#10;}]' doc:name="Insert Variable" doc:id="9fa9bf6c-2b19-4104-ad87-82c649319bc7" variableName="Insert" />
+		<set-payload value="#[p('db.post.ProfileImage')]" doc:name="Insert DB Query" doc:id="5333a404-a301-447a-ba32-39488197756e" />
+		<flow-ref doc:name="Insert database" doc:id="147e9da8-dc92-45c2-9f53-9550500412b5" name="insert_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User created successfully"&#10;}]' doc:name="Set Payload" doc:id="527cfb27-1c2a-48c9-807d-a978a8344f1b" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="1ac5dde7-884a-4c96-8150-e391b829d6a0" message="Post ProfileImage End Successfully" />
+    </flow>
+    <flow name="post:\user-profile\supportingDocuments:application\json:user_profile-sapi-config">
+		<logger level="INFO" doc:name="Initial logger" doc:id="52348c94-5349-4aab-aea1-103025afaebc" message="Post SupportingDocuments start flow" />
+		<set-variable value='#[{&#10;  "EmployeeID": payload.EmployeeID,&#10;  "SSLC_MarksheetCertificate": payload.SSLC_MarksheetCertificate,&#10;  "UG_DegreeCertificate": payload.UG_DegreeCertificate,&#10;  "Certificate1_Mulesoft": payload.Certificate1_Mulesoft,&#10;  "Certificate2_Mulesoft": payload.Certificate2_Mulesoft,&#10;  "Certificate3_Mulesoft": payload.Certificate3_Mulesoft,&#10;  "AadhaarCard": payload.AadhaarCard,&#10;  "BackgroundVerification1": payload.BackgroundVerification1,&#10;  "PreviousEmployerJoiningLetters": payload.PreviousEmployerJoiningLetters,&#10;  "PreviousEmployerAppointmentOrders": payload.PreviousEmployerAppointmentOrders,&#10;  "OtherTechCertifications": payload.OtherTechCertifications,&#10;  "PanCard":  payload.PanCard,&#10;  "HSC_PUC_CertificateMarksheet": payload.HSC_PUC_CertificateMarksheet,&#10;  "PG_DegreeCertificate": payload.PG_DegreeCertificate,&#10;  "Last_3_Month_Payslips": payload.Last_3_Month_Payslips,&#10;  "PreviousEmployerRelievingLetter": payload.PreviousEmployerRelievingLetter,&#10;  "OfferLetter": payload.OfferLetter,&#10;  "Resume": payload.Resume&#10;}]' doc:name="Insert Variable" doc:id="c8e15240-74f0-459a-8025-32634516d653" variableName="Insert" />
+		<set-payload value="#[p('db.post.SupportingDocuments')]" doc:name="Insert DB Query" doc:id="5d7e79da-5431-474a-b876-74bb33ac057b" />
+		<flow-ref doc:name="Insert database" doc:id="43742527-a623-4aa4-aeea-5a6bdf1c383f" name="insert_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User created successfully"&#10;}]' doc:name="Set Payload" doc:id="23af5a09-b7cf-47bb-bde3-58e9eda1f66d" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="c4d41e67-da95-496a-868d-8580e0e08685" message="Post SupportingDocuments End Successfully" />
+    </flow>
+    <flow name="post:\user-profile\workInformation:application\json:user_profile-sapi-config">
+		<logger level="INFO" doc:name="Initial logger" doc:id="d3ffdc5a-570c-48a8-8c18-339ffae4a8ca" message="Post WorkInformation start flow" />
+		<set-variable value='#[{&#10;  "EmployeeID": payload.EmployeeID,&#10;  "Age": payload.Age,&#10;  "WorkPhoneNumber": payload.WorkPhoneNumber,&#10;  "NickName": payload.NickName,&#10;  "Role": payload.Role,&#10;  "EmploymentType": payload.EmploymentType,&#10;  "EmployeeStatus": payload.EmployeeStatus,&#10;  "SourceOfHire": payload.SourceOfHire&#10;}]' doc:name="Insert Variable" doc:id="0761bd83-f1d4-464f-b8c0-fff337b0d3e8" variableName="Insert"/>
+		<set-payload value="#[p('db.post.WorkInformation')]" doc:name="Insert DB Query" doc:id="01985a1b-c755-4319-ac09-2085700da434" />
+		<flow-ref doc:name="Insert database" doc:id="dbe5e464-dadf-4f34-8f16-2a0758c46ee6" name="insert_database_subFlow" />
+		<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  status: "OK",&#10;  message: "User created successfully"&#10;}]' doc:name="Set Payload" doc:id="f9b887f4-9b3a-43c0-96f5-aa684c570fdc" />
+		<logger level="INFO" doc:name="Final Logger" doc:id="7fa0e30f-63ae-4522-b9f2-c1c0b150674e" message="Post WorkInformation End Successfully" />
+    </flow>
+</mule>

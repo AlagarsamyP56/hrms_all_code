@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/updatepersonalDetails",
+  "definitions": {
+    "updatepersonalDetails": {
+      "type": "object",
+      "example": {
+        "Citizenship": "Indian",
+        "BloodGroup": "A+"
+      },
+      "additionalProperties": true,
+      "properties": {
+        "MaritalStatus": {
+          "type": "string"
+        },
+        "AboutMe": {
+          "type": "string"
+        },
+        "Citizenship": {
+          "type": "string"
+        },
+        "BloodGroup": {
+          "type": "string"
+        },
+        "Ask me about/Expertise": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

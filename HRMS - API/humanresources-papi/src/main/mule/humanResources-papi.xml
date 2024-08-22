@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"  xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd   
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	<flow name="humanResources-papi-main">
+        <http:listener path="/api/*" config-ref="HumanResources-papi-httpListenerConfig">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+		<apikit:router config-ref="humanResources-papi-config"/>
+		<error-handler ref="errorHandlingError_Handler">
+           
+        </error-handler>
+    </flow>
+    <flow name="patch:\signin\forgotPassword:application\json:humanResources-papi-config">
+		<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;if(payload.UserName  matches /.*@.*/ ){"Email" : payload.UserName,&#10;"Password":payload.Password }&#10;  else {"PhoneNumber" : payload.UserName,&#10;"Password":payload.Password }]' doc:name="Login Data Variable" doc:id="97ccbc10-7f8e-4870-bb28-b1ef3e7108e1" variableName="login_data"/>
+		<set-variable value="#[p('HumanResources.signup')]" doc:name="Path Variable" doc:id="44358737-1a9e-4fa2-969e-9fd012507d12" variableName="Path"/>
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="45a2b177-e636-4ebc-8071-1d025c782743" variableName="Method"/>
+		<flow-ref doc:name="Human Resources API" doc:id="b295f961-2a88-4432-b373-26e6648d4751" name="commonRequest_Sub_Flow" />
+		<set-payload value="#[%dw 2.0&#10;output application/java&#10;---&#10;&#10;vars.GetResponse filter  $.Email == vars.login_data.Email]" doc:name="filter the emails and match" doc:id="750877ff-4f5d-4c0c-9ceb-41487f5ee7dd" />
+		<flow-ref doc:name="Forgot Password Choice" doc:id="f72f6198-75d1-405f-979f-9b648d394ee4" name="Forgot_Password_Choice_Sub_Flow"/>
+    </flow>
+    <flow name="post:\signin:application\json:humanResources-papi-config">
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="Login Data Variable" doc:id="a4ed18e9-16f4-4d54-9df1-f909816c237c" variableName="login_data"/>
+		<set-variable value="#[p('HumanResources.signup')]" doc:name="Path Variable" doc:id="584e2560-a120-4ed0-8108-6112a52a5222" variableName="Path"/>
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="11c5dd5e-5d1b-454b-96cb-6eba8520087d" variableName="Method"/>
+		<flow-ref doc:name="Human Resources API" doc:id="e4075be5-d183-4dca-8620-e4f20e3d8081" name="commonRequest_Sub_Flow" />
+		<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;&#10;vars.GetResponse filter  $.Email == vars.login_data.UserName or $.PhoneNumber == vars.login_data.UserName]" doc:name="Set Payload" doc:id="cdf1064c-9434-4727-97d8-bf052bcd5e2a" />
+		<flow-ref doc:name="Signin Choice" doc:id="e7c46b31-223f-4e47-847e-55bad54f2cba" name="Signin_Choice_Sub_Flow"/>
+		
+    </flow>
+    <flow name="post:\signup:application\json:humanResources-papi-config">
+		<set-variable value="#[payload]" doc:name="Signup Payload Variable" doc:id="c990a304-b6f6-4f13-88e5-7dc2e35b7a32" variableName="signup_payload"/>
+		<set-variable value="#[p('HumanResources.signup')]" doc:name="Path Variable" doc:id="a41754a6-d019-4ee2-acca-26289049da6f" variableName="Path"/>
+		<set-variable value='#["GET"]' doc:name="Method Variable" doc:id="bb611f2c-9ab6-43f9-aa28-751960150993" variableName="Method"/>
+		<flow-ref doc:name="Human Resources API" doc:id="cb238dc1-20c4-4228-a958-f770cbe16ad9" name="commonRequest_Sub_Flow" />
+		<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;&#10;vars.GetResponse filter  $.Email == vars.signup_payload.Email]" doc:name="filter the emails and match" doc:id="d9d677ee-3596-40a3-b9e9-15ca563658dd" />
+		<flow-ref doc:name="Signup Choice" doc:id="5f0b8737-15e1-47cc-8021-43662d141d94" name="Signup_Choice_Sub_Flow"/>
+    </flow>
+    <flow name="post:\resendOTP:application\json:humanResources-papi-config" doc:id="4a60682d-ef76-4c41-9f89-3ca70e2a1551">
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="Signup Payload Variable" doc:id="604bf240-20d9-4249-86ec-eb05d8edd915" variableName="signup_payload"/>
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;randomInt(1000000)]" doc:name="OTP Generate Variable" doc:id="9de15758-f1b8-482c-a33f-d5912018f525" variableName="otp"/>
+		<set-variable value='#[%dw 2.0&#10;output application/java&#10;---&#10;vars.otpMessage  default "Resend"]' doc:name="OTP Message Variable" doc:id="b73af0de-cdb6-41c0-8654-975174e34b8d" variableName="otpMessage"/>
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;{Email: vars.login_data.UserName}]" doc:name="Login Data Variable" doc:id="2558a706-27bd-4c38-9d47-5572d6e0bbea" variableName="login_data"/>
+		<choice doc:name="Choice" doc:id="ba960f80-c41d-4934-aac1-4cf66cc68d5c" >
+			<when expression="#[sizeOf(vars.otp) == 6]">
+				<os:store doc:name="OTP Store" doc:id="db82db0e-34f5-4278-95f8-3195e2ef8e32" key="#[payload.Email]" objectStore="OTP">
+			<os:value><![CDATA[#[vars.otp]]]></os:value>
+		</os:store>
+				<set-variable value="#[p('notification.emailPath')]" doc:name="path Variable" doc:id="ec89f9b2-408a-4d74-8deb-583fc94f0df0" variableName="path"/>
+				<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  "to": [&#10;    vars.signup_payload.Email&#10;  ],&#10;  "cc": [&#10;    "maheshr@dwinsoft.in"&#10;  ],&#10;  "subject": "OTP Verification",&#10;  "body": "&lt;p&gt;Hi, &lt;br&gt; Please use your provided OTP (One-Time Password) for "++ vars.otpMessage++". It expires in 1 minute, so use it promptly to complete your action.&lt;br&gt;&lt;center style=\"font-size:60px;\"&gt;&lt;a style=\"text-decoration:none\" href=\"#\"&gt;" ++ vars.otp ++ "&lt;/a&gt;&lt;/center&gt;&lt;br&gt;&lt;center&gt;&lt;marquee direction=\"right\" behavior=\"alternate\"&gt;&lt;b style=\"color:#CC0033;\"&gt;Do not share this OTP with anyone!!!&lt;/b&gt;&lt;/marquee&gt;&lt;/center&gt;&lt;br&gt;&lt;img src=\"https://www.dwinsoft.in/images/dwinsoftLogo_dark.png\" alt=\"Image\" width=\"300\" height=\"80\"&gt;&lt;/p&gt;",&#10;  "bodyType": "text/html"&#10;}]' doc:name="Set Payload" doc:id="09a00402-b68c-452f-a233-827ffebffa30" />
+				<flow-ref doc:name="Notifications SAPI" doc:id="4bf28524-258b-4f76-bbbc-1ee5026b4517" name="notifications-sapi_Sub_Flow" />
+				<set-payload value="#[&quot;You'll receive an email which contains OTP. Please use that OTP for verifying your account.&quot;]" doc:name="Set Payload" doc:id="2080b205-b5fe-4918-9a84-613b8b0eaa43" />
+			</when>
+			<otherwise>
+				<flow-ref doc:name="Flow Reference" doc:id="a35887c4-918a-4c4a-8e5b-2288c6e2fd71" name="post:\resendOTP:application\json:humanResources-papi-config" />
+			</otherwise>
+		</choice>
+    </flow>
+<flow name="post:\signup\signupOTP:application\json:humanResources-papi-config">
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="Input OTP Variable" doc:id="b2bf480c-2679-4862-856d-6e84b1df98a7" variableName="input_otp"/>
+		<os:retrieve doc:name="Retrieve OTP" doc:id="dd99f06b-5f0b-467b-b0a1-e7fede217611" key="#[vars.input_otp.Email]" objectStore="OTP">
+			<os:default-value ><![CDATA[#["Not a valid OTP"]]]></os:default-value>
+		</os:retrieve>
+		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="cbbe788b-bfdc-4333-a44c-949905d44cfd" variableName="retrieve" />
+		<flow-ref doc:name="SignupOTP" doc:id="ecf48755-2349-4527-bb2c-fe712ea03b7d" name="SignupOTP_ChoiceSub_Flow"/>
+    </flow>
+     <flow name="post:\signin\forgotPasswordOTP:application\json:humanResources-papi-config">
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="Input OTP Variable" doc:id="7db6bffa-ac1f-4cfa-a631-356a9613ffb8" variableName="input_otp"/>
+		<os:retrieve doc:name="Retrieve OTP" doc:id="0a5dfea3-3ce0-4143-a2a8-6d06150dbc72" key="#[vars.input_otp.Email]" objectStore="OTP">
+			<os:default-value ><![CDATA[#["Not a valid OTP"]]]></os:default-value>
+		</os:retrieve>
+		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="6f0cb0ff-fda9-4751-8dd0-309f54d3fef1" variableName="retrieve" />
+		<flow-ref doc:name="Signin Forgot PosswordOTP" doc:id="1ac3bddf-25a4-4a4f-850d-017a6c2ace0b" name="Signin_Forget_PosswordOTP_ChoiceSub_Flow"/>
+    </flow>
+</mule>
